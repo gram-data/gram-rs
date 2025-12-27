@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "test_cases": [
+    {
+      "name": "example_placeholder",
+      "description": "Example test case demonstrating the JSON schema format",
+      "input": {
+        "type": "gram_notation",
+        "value": "(node)"
+      },
+      "expected": {
+        "type": "pattern",
+        "value": {
+          "type": "Cons",
+          "head": {
+            "type": "Node",
+            "labels": ["node"]
+          },
+          "tail": {
+            "type": "Empty"
+          }
+        }
+      },
+      "operations": []
+    }
+  ]
+}

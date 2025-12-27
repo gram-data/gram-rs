@@ -1,0 +1,15 @@
+[package]
+name = "gram-codec"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Gram notation serialization/deserialization"
+
+[dependencies]
+
+[lib]
+name = "gram_codec"
+path = "src/lib.rs"
+
