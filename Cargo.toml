@@ -1,5 +1,8 @@
-[package]
-name = "gram"
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.70.0"
@@ -8,15 +11,7 @@ license = "BSD-3-Clause"
 description = "Rust port of gram-hs pattern data structure and graph views"
 repository = "https://github.com/gram-data/gram-rs"
 
-[lib]
-name = "gram"
-path = "src/lib.rs"
-
-[dependencies]
-
-[dev-dependencies]
-
-[features]
-default = []
-wasm = []
-
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"

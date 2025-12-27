@@ -47,28 +47,50 @@ All functionality is designed to faithfully replicate the behavior of the Haskel
    cargo build --target wasm32-unknown-unknown
    ```
 
+## Workspace Structure
+
+This project is organized as a Cargo workspace with multiple crates:
+
+```
+gram-rs/
+├── Cargo.toml              # Workspace root configuration
+├── crates/
+│   ├── pattern-core/        # Core pattern data structures
+│   ├── pattern-ops/          # Pattern operations and algorithms
+│   ├── gram-codec/          # Gram notation serialization/deserialization
+│   ├── pattern-store/       # Optimized storage (placeholder)
+│   └── pattern-wasm/        # WASM bindings (placeholder)
+└── .github/workflows/       # CI/CD configuration
+```
+
 ## Building
 
 ### Build Commands
 
 ```bash
-# Build the library (native target)
-cargo build
+# Build all workspace crates (native target)
+cargo build --workspace
+
+# Build a specific crate
+cargo build -p pattern-core
 
 # Build for WebAssembly
-cargo build --target wasm32-unknown-unknown
+cargo build --workspace --target wasm32-unknown-unknown
 
-# Run tests
-cargo test
+# Run all workspace tests
+cargo test --workspace
 
-# Check code
-cargo check
+# Test a specific crate
+cargo test -p pattern-core
 
-# Format code
-cargo fmt
+# Check all crates
+cargo check --workspace
 
-# Lint code
-cargo clippy
+# Format all crates
+cargo fmt --all
+
+# Lint all crates
+cargo clippy --workspace
 ```
 
 ### WASM Compatibility

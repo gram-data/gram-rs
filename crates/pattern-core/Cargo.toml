@@ -1,0 +1,15 @@
+[package]
+name = "pattern-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Core pattern data structures"
+
+[dependencies]
+
+[lib]
+name = "pattern_core"
+path = "src/lib.rs"
+
