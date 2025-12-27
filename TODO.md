@@ -14,15 +14,15 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - [x] Example structure for external bindings
 
 ### 002-workspace-setup: Multi-Crate Workspace
-- [ ] Convert to Cargo workspace structure
-- [ ] Create `crates/pattern-core/` crate
-- [ ] Create `crates/pattern-ops/` crate
-- [ ] Create `crates/gram-codec/` crate
-- [ ] Create `crates/pattern-store/` crate (placeholder)
-- [ ] Create `crates/pattern-wasm/` crate (placeholder)
-- [ ] Configure workspace dependencies
-- [ ] Setup CI/CD pipeline (GitHub Actions)
-- [ ] Add test synchronization infrastructure
+- [x] Convert to Cargo workspace structure
+- [x] Create `crates/pattern-core/` crate
+- [x] Create `crates/pattern-ops/` crate
+- [x] Create `crates/gram-codec/` crate
+- [x] Create `crates/pattern-store/` crate (placeholder)
+- [x] Create `crates/pattern-wasm/` crate (placeholder)
+- [x] Configure workspace dependencies
+- [x] Setup CI/CD pipeline (GitHub Actions)
+- [x] Add test synchronization infrastructure
 
 ### 003-test-infrastructure: Testing Framework
 - [ ] Setup property-based testing with `proptest`
