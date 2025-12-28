@@ -9,6 +9,6 @@ fn test_snapshot_example() {
     // Placeholder snapshot test
     // Will be fully implemented when pattern types are defined in feature 004
     let output = "example output";
-    assert_snapshot!(output);
+    assert_snapshot!("placeholder", output);
 }
 

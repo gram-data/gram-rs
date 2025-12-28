@@ -96,7 +96,7 @@ where
     // For now, use direct comparison as placeholder
     // Full implementation will use JSON serialization for detailed diff reporting
     let equivalent = gram_rs_output == gram_hs_output;
-    
+
     EquivalenceResult {
         equivalent,
         differences: if equivalent {

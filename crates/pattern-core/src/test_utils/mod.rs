@@ -6,6 +6,5 @@
 //! - Property-based test generators
 
 pub mod equivalence;
-pub mod helpers;
 pub mod generators;
-
+pub mod helpers;

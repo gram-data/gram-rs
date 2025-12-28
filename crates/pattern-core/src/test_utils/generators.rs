@@ -21,4 +21,3 @@
 //     // Produces patterns suitable for property testing
 //     // Generates at least 100 test cases per property (per SC-001)
 // }
-
