@@ -97,6 +97,8 @@ PROPTEST_CASES=1000 cargo test
 
 ## Equivalence Checking
 
+**Note**: For using the `gram-hs` CLI tool for equivalence checking, see [gram-hs CLI Testing Guide](../../docs/gram-hs-cli-testing-guide.md) for comprehensive examples using `--value-only`, `--deterministic`, and `--canonical` flags.
+
 ### Using Test Data
 
 ```rust
@@ -282,6 +284,17 @@ open target/criterion/index.html
 
 ### Extract Test Cases from gram-hs
 
+**Using gram-hs CLI** (recommended):
+```bash
+# Generate test suite with 100 test cases
+gram-hs generate --type suite --count 100 --seed 42 --complexity standard \
+    --format json --value-only > tests/common/test_cases.json
+
+# Validate extracted test cases
+cargo test test_validate_test_cases
+```
+
+**Using extraction script** (alternative):
 ```bash
 # Extract test cases (when implemented)
 ./scripts/sync-tests/extract.sh ../gram-hs > tests/common/test_cases.json
@@ -289,6 +302,8 @@ open target/criterion/index.html
 # Validate extracted test cases
 cargo test test_validate_test_cases
 ```
+
+See [gram-hs CLI Testing Guide](../../docs/gram-hs-cli-testing-guide.md) for detailed usage examples and integration patterns.
 
 ### Using Extracted Test Cases
 

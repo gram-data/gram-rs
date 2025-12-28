@@ -4,6 +4,9 @@
 **Date**: 2025-01-27  
 **Purpose**: Define API contracts for test utility functions
 
+**Related Documentation**:
+- [gram-hs CLI Testing Guide](../../../docs/gram-hs-cli-testing-guide.md) - Guide for using `gram-hs` CLI tool with `--value-only`, `--deterministic`, and `--canonical` flags for equivalence checking
+
 ## Overview
 
 This document defines the API contracts for test utilities including equivalence checking, test helpers, and property-based test generators. These utilities support testing across the gram-rs workspace.

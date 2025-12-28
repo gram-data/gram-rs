@@ -1,4 +1,16 @@
 //! Equivalence checking tests using test data
+//!
+//! # Using gram-hs CLI for Reference Outputs
+//!
+//! These tests can use the `gram-hs` CLI tool to get reference outputs:
+//!
+//! ```bash
+//! # Get reference output for comparison
+//! echo '(node1)' | gram-hs parse --format json --value-only --canonical
+//! ```
+//!
+//! See [gram-hs CLI Testing Guide](../../../../docs/gram-hs-cli-testing-guide.md) for
+//! comprehensive usage examples and integration patterns.
 
 use pattern_core::test_utils::equivalence::{
     check_equivalence, check_equivalence_from_test_data, EquivalenceOptions, ComparisonMethod,

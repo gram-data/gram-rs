@@ -1,4 +1,16 @@
 //! Equivalence checking utilities for comparing gram-rs and gram-hs implementations
+//!
+//! # Using gram-hs CLI for Reference Outputs
+//!
+//! The `gram-hs` CLI tool can be used to get reference outputs for comparison:
+//!
+//! ```bash
+//! # Get reference output (value only, canonical format)
+//! echo '(node1)' | gram-hs parse --format json --value-only --canonical
+//! ```
+//!
+//! See [gram-hs CLI Testing Guide](../../../../docs/gram-hs-cli-testing-guide.md) for
+//! comprehensive usage examples and integration patterns.
 
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;

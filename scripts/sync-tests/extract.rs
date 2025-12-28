@@ -2,6 +2,18 @@
 //!
 //! This module provides utilities for extracting test cases from the gram-hs
 //! reference implementation and converting them to a format usable by gram-rs.
+//!
+//! # Using gram-hs CLI for Test Suite Generation
+//!
+//! The `gram-hs` CLI tool can generate test suites directly:
+//!
+//! ```bash
+//! gram-hs generate --type suite --count 100 --seed 42 --complexity standard \
+//!     --format json --value-only > tests/common/test_cases.json
+//! ```
+//!
+//! See [gram-hs CLI Testing Guide](../../../docs/gram-hs-cli-testing-guide.md) for
+//! detailed usage examples and integration patterns.
 
 use serde_json::Value;
 use std::fs;

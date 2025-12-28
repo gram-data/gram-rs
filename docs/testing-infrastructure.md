@@ -18,7 +18,9 @@ Property-based testing generates random test inputs automatically and validates 
 
 Utilities for comparing outputs from gram-rs and gram-hs implementations to ensure behavioral equivalence.
 
-**Usage**: See `crates/pattern-core/src/test_utils/equivalence.rs` for API documentation.
+**Usage**: 
+- See `crates/pattern-core/src/test_utils/equivalence.rs` for API documentation
+- See [gram-hs CLI Testing Guide](gram-hs-cli-testing-guide.md) for using the `gram-hs` CLI tool with `--value-only`, `--deterministic`, and `--canonical` flags for reliable comparison
 
 ### Snapshot Testing (insta)
 

@@ -109,6 +109,8 @@ The project includes comprehensive testing infrastructure:
 
 See [docs/testing-infrastructure.md](docs/testing-infrastructure.md) for detailed documentation and [specs/003-test-infrastructure/quickstart.md](specs/003-test-infrastructure/quickstart.md) for usage examples.
 
+For using the `gram-hs` CLI tool for testing and equivalence checking, see [gram-hs CLI Testing Guide](docs/gram-hs-cli-testing-guide.md).
+
 ## Examples
 
 See the [examples/](examples/) directory for usage examples:
