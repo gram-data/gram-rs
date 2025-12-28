@@ -37,21 +37,11 @@ impl Default for PatternComparisonOptions {
 }
 
 /// Rules for pattern structure validation
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct ValidationRules {
     pub max_depth: Option<usize>,
     pub max_elements: Option<usize>,
     pub required_fields: Vec<String>,
-}
-
-impl Default for ValidationRules {
-    fn default() -> Self {
-        Self {
-            max_depth: None,
-            max_elements: None,
-            required_fields: Vec::new(),
-        }
-    }
 }
 
 /// Error type for pattern validation failures
