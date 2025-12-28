@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.target }}
       - run: |
           if [ "${{ matrix.target }}" = "wasm32-unknown-unknown" ]; then
-            cargo build --workspace --target ${{ matrix.target }} -p pattern-core -p pattern-ops -p gram-codec
+            cargo build --target ${{ matrix.target }} -p pattern-core -p pattern-ops -p gram-codec
           else
             cargo build --workspace --target ${{ matrix.target }}
           fi
