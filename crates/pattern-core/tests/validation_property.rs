@@ -13,4 +13,3 @@ fn test_validation_property_placeholder() {
     let rules = ValidationRules::default();
     assert!(pattern.validate(&rules).is_ok());
 }
-

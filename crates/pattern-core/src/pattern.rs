@@ -634,9 +634,9 @@ impl<V> Pattern<V> {
         for (index, element) in self.elements.iter().enumerate() {
             location.push("elements".to_string());
             location.push(index.to_string());
-            
+
             element.validate_recursive(rules, current_depth + 1, location)?;
-            
+
             location.pop(); // Remove index
             location.pop(); // Remove "elements"
         }
@@ -679,21 +679,22 @@ impl<V> Pattern<V> {
     pub fn analyze_structure(&self) -> StructureAnalysis {
         let mut depth_distribution = Vec::new();
         let mut element_counts = Vec::new();
-        
+
         self.analyze_recursive(0, &mut depth_distribution, &mut element_counts);
-        
+
         // Trim trailing zeros from element_counts (leaf levels with 0 elements)
         // According to spec: atomic pattern should have [], 2-level tree should have [count], not [count, 0]
         while let Some(&0) = element_counts.last() {
             element_counts.pop();
         }
-        
+
         // Identify nesting patterns
         let nesting_patterns = self.identify_nesting_patterns(&depth_distribution, &element_counts);
-        
+
         // Generate summary
-        let summary = self.generate_summary(&depth_distribution, &element_counts, &nesting_patterns);
-        
+        let summary =
+            self.generate_summary(&depth_distribution, &element_counts, &nesting_patterns);
+
         StructureAnalysis {
             depth_distribution,
             element_counts,
@@ -717,10 +718,10 @@ impl<V> Pattern<V> {
         while element_counts.len() <= current_depth {
             element_counts.push(0);
         }
-        
+
         // Count this node at current depth
         depth_distribution[current_depth] += 1;
-        
+
         // Track maximum element count at current level
         // Maximum is used for linear/tree pattern detection (all nodes <= 1 vs any node > 1)
         // For balanced patterns, we compare maximums across levels, which works correctly
@@ -729,7 +730,7 @@ impl<V> Pattern<V> {
         if current_count > element_counts[current_depth] {
             element_counts[current_depth] = current_count;
         }
-        
+
         // Recursively analyze elements
         for element in &self.elements {
             element.analyze_recursive(current_depth + 1, depth_distribution, element_counts);
@@ -743,24 +744,24 @@ impl<V> Pattern<V> {
         element_counts: &[usize],
     ) -> Vec<String> {
         let mut patterns = Vec::new();
-        
+
         if depth_distribution.len() <= 1 {
             patterns.push("atomic".to_string());
             return patterns;
         }
-        
+
         // Check for linear pattern (one element per level)
         let is_linear = element_counts.iter().all(|&count| count <= 1);
         if is_linear {
             patterns.push("linear".to_string());
         }
-        
+
         // Check for tree-like pattern (multiple elements, decreasing with depth)
         let has_branching = element_counts.iter().any(|&count| count > 1);
         if has_branching {
             patterns.push("tree".to_string());
         }
-        
+
         // Check for balanced pattern (similar element counts across levels)
         // Balanced means counts are within 50% of each other (ratio between 0.5 and 2.0)
         // Note: element_counts already has trailing zeros trimmed, so all entries are non-zero
@@ -771,18 +772,18 @@ impl<V> Pattern<V> {
                 let similar_counts = element_counts.iter().skip(1).all(|&count| {
                     let ratio = count as f64 / first_count as f64;
                     // Balanced if ratio is between 0.5 and 2.0 (within 50% of first_count)
-                    ratio >= 0.5 && ratio <= 2.0
+                    (0.5..=2.0).contains(&ratio)
                 });
                 if similar_counts && first_count > 1 {
                     patterns.push("balanced".to_string());
                 }
             }
         }
-        
+
         if patterns.is_empty() {
             patterns.push("irregular".to_string());
         }
-        
+
         patterns
     }
 
@@ -800,7 +801,7 @@ impl<V> Pattern<V> {
         } else {
             &nesting_patterns[0]
         };
-        
+
         format!(
             "Pattern with {} level{}, {} node{}, {}-like structure",
             max_depth + 1,

@@ -13,4 +13,3 @@ fn test_analysis_property_placeholder() {
     let analysis = pattern.analyze_structure();
     assert_eq!(analysis.depth_distribution.len(), 1);
 }
-

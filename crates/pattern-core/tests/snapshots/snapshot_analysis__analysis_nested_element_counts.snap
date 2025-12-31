@@ -3,4 +3,4 @@ source: crates/pattern-core/tests/snapshot_analysis.rs
 assertion_line: 29
 expression: "format!(\"{:?}\", analysis.element_counts)"
 ---
-[2, 0]
+[2]

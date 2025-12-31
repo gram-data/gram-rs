@@ -17,10 +17,10 @@ use pattern_core::{Pattern, StructureAnalysis, ValidationError, ValidationRules}
 fn test_validation_equivalence_framework() {
     // Framework test - validates that validation works with basic patterns
     // Future: Can use gram-hs generate to create test patterns
-    
+
     let pattern = Pattern::point("test".to_string());
     let rules = ValidationRules::default();
-    
+
     // Should validate successfully
     assert!(pattern.validate(&rules).is_ok());
 }
@@ -29,10 +29,10 @@ fn test_validation_equivalence_framework() {
 fn test_analysis_equivalence_framework() {
     // Framework test - validates that analysis works with basic patterns
     // Future: Can use gram-hs generate to create test patterns
-    
+
     let pattern = Pattern::point("test".to_string());
     let analysis = pattern.analyze_structure();
-    
+
     // Should produce analysis results
     assert_eq!(analysis.depth_distribution.len(), 1);
     assert!(!analysis.summary.is_empty());
@@ -42,4 +42,3 @@ fn test_analysis_equivalence_framework() {
 //   gram-hs generate --type suite --count 100 --seed 42 --format json --value-only
 // Then parse patterns and test validation/analysis functions
 // Reference: docs/gram-hs-cli-testing-guide.md
-
