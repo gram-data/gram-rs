@@ -20,7 +20,7 @@ impl<V> Pattern<V> {
     /// Creates an atomic pattern (a pattern with no elements) from a value.
     ///
     /// This is a convenience constructor for creating simple patterns.
-    /// Equivalent to gram-hs `pattern :: v -> Pattern v`.
+    /// Equivalent to gram-hs `point :: v -> Pattern v`.
     ///
     /// # Arguments
     ///
@@ -339,8 +339,8 @@ No functions return `Result` types. All operations are infallible:
 ## Performance Characteristics
 
 - **Construction**: 
+  - `point()`: O(1)
   - `pattern()`: O(1)
-  - `pattern_with()`: O(1)
   - `from_list()`: O(n) where n is length of values list
 - **Accessors**: O(1) for both `value()` and `elements()`
 - **Inspection**: 

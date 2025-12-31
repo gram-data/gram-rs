@@ -48,7 +48,7 @@ Port pattern construction functions, accessors, and inspection utilities from gr
 - Test case porting from gram-hs for behavioral verification
 
 **Verified from gram-hs Implementation**:
-- ✅ Construction functions: `pattern`, `patternWith`, `fromList` (verified from `Pattern/Core.hs`)
+- ✅ Construction functions: `point`, `pattern`, `fromList` (verified from `Pattern/Core.hs`)
 - ✅ Accessors: `value` and `elements` are record field accessors in Haskell (verified)
 - ✅ Inspection utilities: `length`, `size`, `depth` (verified from `Pattern/Core.hs`)
 - ✅ No input validation needed (Pattern structure is always valid)
@@ -138,14 +138,14 @@ All research tasks completed:
 - `quickstart.md` - Usage examples and quickstart guide
 
 ### Data Model
-- Construction functions defined (`pattern`, `pattern_with`, `from_list`) matching gram-hs
+- Construction functions defined (`point`, `pattern`, `from_list`) matching gram-hs
 - Accessor methods defined (`value`, `elements`) matching gram-hs field accessors
 - Inspection utilities defined (`length`, `size`, `depth`, `is_atomic`) matching gram-hs
 - Relationships and validation rules documented
 - Behavioral equivalence with gram-hs verified
 
 ### Contracts
-- Type signatures for all construction functions (matching gram-hs `pattern`, `patternWith`, `fromList`)
+- Type signatures for all construction functions (matching gram-hs `point`, `pattern`, `fromList`)
 - Type signatures for all accessor methods (matching gram-hs field accessors)
 - Type signatures for all inspection utilities (matching gram-hs `length`, `size`, `depth`)
 - Usage examples provided with correct depth semantics (atomic patterns have depth 0)

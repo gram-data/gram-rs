@@ -40,8 +40,8 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [x] T004 [P] [US1] Test Pattern::pattern() creates atomic pattern in tests/unit/pattern_core.rs
-- [x] T005 [P] [US1] Test Pattern::pattern_with() creates pattern with elements in tests/unit/pattern_core.rs
+- [x] T004 [P] [US1] Test Pattern::point() creates atomic pattern in tests/unit/pattern_core.rs
+- [x] T005 [P] [US1] Test Pattern::pattern() creates pattern with elements in tests/unit/pattern_core.rs
 - [x] T006 [P] [US1] Test Pattern::from_list() creates pattern from value list in tests/unit/pattern_core.rs
 - [x] T007 [P] [US1] Test construction with string values in tests/unit/pattern_core.rs
 - [x] T008 [P] [US1] Test construction with integer values in tests/unit/pattern_core.rs
@@ -51,13 +51,13 @@
 
 ### Implementation for User Story 1
 
-- [x] T012 [US1] Implement Pattern::pattern() associated function in crates/pattern-core/src/pattern.rs
-- [x] T013 [US1] Implement Pattern::pattern_with() associated function in crates/pattern-core/src/pattern.rs
+- [x] T012 [US1] Implement Pattern::point() associated function in crates/pattern-core/src/pattern.rs
+- [x] T013 [US1] Implement Pattern::pattern() associated function in crates/pattern-core/src/pattern.rs
 - [x] T014 [US1] Implement Pattern::from_list() associated function in crates/pattern-core/src/pattern.rs
 - [x] T015 [US1] Add doc comments to construction functions in crates/pattern-core/src/pattern.rs
 - [x] T016 [US1] Export construction functions in crates/pattern-core/src/lib.rs
 
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently. Developers can construct patterns using `pattern()`, `pattern_with()`, and `from_list()` functions.
+**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently. Developers can construct patterns using `point()`, `pattern()`, and `from_list()` functions.
 
 ---
 
@@ -134,8 +134,8 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [x] T044 [P] [US4] Port test cases from gram-hs for pattern() construction in tests/equivalence/pattern_construction_access.rs
-- [x] T045 [P] [US4] Port test cases from gram-hs for patternWith() construction in tests/equivalence/pattern_construction_access.rs
+- [x] T044 [P] [US4] Port test cases from gram-hs for point() construction in tests/equivalence/pattern_construction_access.rs
+- [x] T045 [P] [US4] Port test cases from gram-hs for pattern() construction in tests/equivalence/pattern_construction_access.rs
 - [x] T046 [P] [US4] Port test cases from gram-hs for fromList() construction in tests/equivalence/pattern_construction_access.rs
 - [x] T047 [P] [US4] Port test cases from gram-hs for value accessor in tests/equivalence/pattern_construction_access.rs
 - [x] T048 [P] [US4] Port test cases from gram-hs for elements accessor in tests/equivalence/pattern_construction_access.rs
@@ -206,8 +206,8 @@
 
 ```bash
 # Launch all tests for User Story 1 together:
-Task: "Test Pattern::pattern() creates atomic pattern in tests/unit/pattern_core.rs"
-Task: "Test Pattern::pattern_with() creates pattern with elements in tests/unit/pattern_core.rs"
+Task: "Test Pattern::point() creates atomic pattern in tests/unit/pattern_core.rs"
+Task: "Test Pattern::pattern() creates pattern with elements in tests/unit/pattern_core.rs"
 Task: "Test Pattern::from_list() creates pattern from value list in tests/unit/pattern_core.rs"
 Task: "Test construction with string values in tests/unit/pattern_core.rs"
 Task: "Test construction with integer values in tests/unit/pattern_core.rs"
@@ -290,7 +290,7 @@ With a single developer:
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
 - Reference gram-hs implementation at `../gram-hs/libs/pattern/src/Pattern/Core.hs` for behavioral equivalence
-- All functions must match gram-hs signatures: `pattern`, `patternWith`, `fromList`, `length`, `size`, `depth`
+- All functions must match gram-hs signatures: `point`, `pattern`, `fromList`, `length`, `size`, `depth`
 - Accessors `value` and `elements` are field accessors in Haskell, methods in Rust
 - Depth returns 0 for atomic patterns (corrected from previous inconsistency)
 

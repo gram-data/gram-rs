@@ -19,14 +19,14 @@ use pattern_core::Pattern;
 let atomic = Pattern::point("hello".to_string());
 ```
 
-#### Using `Pattern::point()`
+#### Using `Pattern::pattern()`
 
 Create a pattern with a value and elements (primary constructor):
 
 ```rust
 use pattern_core::Pattern;
 
-let pattern = Pattern::point(
+let pattern = Pattern::pattern(
     "parent".to_string(),
     vec![
         Pattern::point("child1".to_string()),
@@ -305,7 +305,7 @@ mod tests {
     }
 
     #[test]
-    fn test_pattern_with() {
+    fn test_pattern() {
         let pattern = Pattern::pattern("parent".to_string(), vec![
             Pattern::point("child".to_string()),
         ]);
@@ -374,7 +374,7 @@ The functions can be used in WASM modules, though JavaScript bindings are deferr
 
 All functions maintain behavioral equivalence with the gram-hs reference implementation:
 
-- `Pattern::point()` matches `pattern :: v -> Pattern v`
+- `Pattern::point()` matches `point :: v -> Pattern v`
 - `Pattern::pattern()` matches `pattern :: v -> [Pattern v] -> Pattern v`
 - `Pattern::from_list()` matches `fromList :: v -> [v] -> Pattern v`
 - `pattern.length()` matches `length :: Pattern v -> Int`

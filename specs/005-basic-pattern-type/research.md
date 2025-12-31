@@ -11,12 +11,12 @@
 
 **Findings**:
 - **Decision**: Construction functions from gram-hs:
-  1. `pattern :: v -> Pattern v` - Creates atomic pattern (pattern with no elements)
-  2. `patternWith :: v -> [Pattern v] -> Pattern v` - Creates pattern with explicit elements
+  1. `point :: v -> Pattern v` - Creates atomic pattern (pattern with no elements) - special case constructor
+  2. `pattern :: v -> [Pattern v] -> Pattern v` - Creates pattern with explicit elements (primary constructor)
   3. `fromList :: v -> [v] -> Pattern v` - Creates pattern from list of values (converts values to atomic patterns)
 - **Rationale**: 
   - `pattern` provides convenience for atomic patterns (common case)
-  - `patternWith` provides full constructor with explicit elements
+  - `pattern` provides primary constructor with explicit elements
   - `fromList` provides convenience for creating patterns from value lists
 - **Alternatives considered**: 
   - Only full constructor - rejected (lacks convenience for atomic patterns)
@@ -30,13 +30,13 @@
 **Rust Translation**:
 ```rust
 impl<V> Pattern<V> {
-    // Equivalent to Haskell's `pattern :: v -> Pattern v`
-    pub fn pattern(value: V) -> Self {
+    // Equivalent to Haskell's `point :: v -> Pattern v`
+    pub fn point(value: V) -> Self {
         Pattern { value, elements: vec![] }
     }
     
-    // Equivalent to Haskell's `patternWith :: v -> [Pattern v] -> Pattern v`
-    pub fn pattern_with(value: V, elements: Vec<Pattern<V>>) -> Self {
+    // Equivalent to Haskell's `pattern :: v -> [Pattern v] -> Pattern v`
+    pub fn pattern(value: V, elements: Vec<Pattern<V>>) -> Self {
         Pattern { value, elements }
     }
     
@@ -208,11 +208,11 @@ impl<V> Pattern<V> {
 ## Resolved Clarifications
 
 All NEEDS CLARIFICATION items from Technical Context have been resolved by verifying against actual gram-hs implementation:
-- ✅ Construction function signatures: `pattern()`, `pattern_with()`, and `from_list()` matching gram-hs `pattern`, `patternWith`, and `fromList`
+- ✅ Construction function signatures: `point()`, `pattern()`, and `from_list()` matching gram-hs `point`, `pattern`, and `fromList`
 - ✅ Accessor implementation: Methods `value()` and `elements()` matching gram-hs field accessors
 - ✅ Inspection utilities: `length()`, `size()`, and `depth()` matching gram-hs functions
 - ✅ Input validation: No validation needed (Pattern structure is always valid)
-- ✅ Convenience constructors: `pattern()` for atomic patterns, `from_list()` for value lists
+- ✅ Special case constructor: `point()` for atomic patterns, primary constructor `pattern()` for patterns with elements, `from_list()` for value lists
 
 **Note**: All decisions have been verified against the actual gram-hs implementation in `../gram-hs/libs/pattern/src/Pattern/Core.hs`. Function signatures match gram-hs with Rust naming conventions (snake_case).
 
