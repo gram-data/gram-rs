@@ -13,14 +13,14 @@ This document defines the construction functions, accessor methods, and inspecti
 
 Construction functions create new pattern instances. These are associated functions (no `self` parameter) that return new `Pattern<V>` instances.
 
-#### `Pattern::pattern(value)`
+#### `Pattern::point(value)`
 
-Creates an atomic pattern (a pattern with no elements) from a value. Equivalent to gram-hs `pattern :: v -> Pattern v`.
+Creates an atomic pattern (a pattern with no elements) from a value. This is the special case constructor for atomic patterns. Equivalent to gram-hs `point :: v -> Pattern v`.
 
 **Signature**:
 ```rust
 impl<V> Pattern<V> {
-    pub fn pattern(value: V) -> Self
+    pub fn point(value: V) -> Self
 }
 ```
 
@@ -32,22 +32,22 @@ impl<V> Pattern<V> {
 **Characteristics**:
 - Generic over value type `V`
 - Creates pattern with specified value and empty elements
-- Convenience constructor for atomic patterns
+- Special case constructor for atomic patterns
 - O(1) operation
 
 **Usage**:
 ```rust
-let atomic = Pattern::pattern("hello".to_string());
+let atomic = Pattern::point("hello".to_string());
 ```
 
-#### `Pattern::pattern_with(value, elements)`
+#### `Pattern::point(value, elements)`
 
-Creates a pattern with explicit elements. Equivalent to gram-hs `patternWith :: v -> [Pattern v] -> Pattern v`.
+Creates a pattern with a value and elements. This is the primary constructor for creating patterns. Takes a decoration value and a list of pattern elements. The elements form the pattern itself; the value provides decoration about that pattern. Equivalent to gram-hs `pattern :: v -> [Pattern v] -> Pattern v`.
 
 **Signature**:
 ```rust
 impl<V> Pattern<V> {
-    pub fn pattern_with(value: V, elements: Vec<Pattern<V>>) -> Self
+    pub fn pattern(value: V, elements: Vec<Pattern<V>>) -> Self
 }
 ```
 
@@ -60,14 +60,15 @@ impl<V> Pattern<V> {
 **Characteristics**:
 - Generic over value type `V`
 - Creates pattern with specified value and elements
+- Primary constructor for patterns
 - No validation needed (Pattern structure is always valid)
 - O(1) operation (just struct construction)
 
 **Usage**:
 ```rust
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::point("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 ```
 
@@ -101,10 +102,10 @@ let pattern = Pattern::from_list("root".to_string(), vec![
     "c".to_string(),
 ]);
 // Equivalent to:
-// Pattern::pattern_with("root".to_string(), vec![
-//     Pattern::pattern("a".to_string()),
-//     Pattern::pattern("b".to_string()),
-//     Pattern::pattern("c".to_string()),
+// Pattern::point("root".to_string(), vec![
+//     Pattern::point("a".to_string()),
+//     Pattern::point("b".to_string()),
+//     Pattern::point("c".to_string()),
 // ])
 ```
 
@@ -132,7 +133,7 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let pattern = Pattern::pattern("hello".to_string());
+let pattern = Pattern::point("hello".to_string());
 let value = pattern.value(); // &String
 ```
 
@@ -156,9 +157,9 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 let elements = pattern.elements(); // &[Pattern<String>]
 ```
@@ -187,9 +188,9 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 assert_eq!(pattern.length(), 2);
 ```
@@ -214,12 +215,12 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let atomic = Pattern::pattern("atom".to_string());
+let atomic = Pattern::point("atom".to_string());
 assert_eq!(atomic.size(), 1);
 
-let pattern = Pattern::pattern_with("root".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::pattern("root".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 assert_eq!(pattern.size(), 3); // root + 2 children
 ```
@@ -245,12 +246,12 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let atomic = Pattern::pattern("hello".to_string());
+let atomic = Pattern::point("hello".to_string());
 assert_eq!(atomic.depth(), 0); // Atomic patterns have depth 0
 
-let nested = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern_with("child".to_string(), vec![
-        Pattern::pattern("grandchild".to_string()),
+let nested = Pattern::pattern("parent".to_string(), vec![
+    Pattern::pattern("child".to_string(), vec![
+        Pattern::point("grandchild".to_string()),
     ]),
 ]);
 assert_eq!(nested.depth(), 2); // parent (0) -> child (1) -> grandchild (2)
@@ -277,11 +278,11 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let atomic = Pattern::pattern("hello".to_string());
+let atomic = Pattern::point("hello".to_string());
 assert!(atomic.is_atomic());
 
-let nested = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child".to_string()),
+let nested = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child".to_string()),
 ]);
 assert!(!nested.is_atomic());
 ```
@@ -291,7 +292,7 @@ assert!(!nested.is_atomic());
 ### Construction → Access
 
 Construction functions create patterns that can be accessed:
-- `Pattern::pattern()`, `Pattern::pattern_with()`, and `Pattern::from_list()` create patterns
+- `Pattern::point()`, `Pattern::pattern()`, and `Pattern::from_list()` create patterns
 - `pattern.value()` and `pattern.elements()` access the created pattern's components
 
 ### Access → Inspection

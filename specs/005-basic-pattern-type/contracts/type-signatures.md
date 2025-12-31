@@ -11,9 +11,9 @@ This document defines the public API type signatures for pattern construction fu
 
 ### Pattern Construction Functions
 
-#### `Pattern::pattern`
+#### `Pattern::point`
 
-Creates an atomic pattern (a pattern with no elements) from a value. Equivalent to gram-hs `pattern :: v -> Pattern v`.
+Creates an atomic pattern (a pattern with no elements) from a value. This is the special case constructor for atomic patterns. Equivalent to gram-hs `point :: v -> Pattern v`.
 
 ```rust
 impl<V> Pattern<V> {
@@ -35,23 +35,27 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let atomic = Pattern::pattern("atom".to_string());
+    /// let atomic = Pattern::point("atom".to_string());
     /// assert_eq!(atomic.value(), "atom");
     /// assert!(atomic.is_atomic());
     /// ```
-    pub fn pattern(value: V) -> Self;
+    pub fn point(value: V) -> Self;
 }
 ```
 
-#### `Pattern::pattern_with`
+#### `Pattern::pattern`
 
-Creates a pattern with explicit elements. Equivalent to gram-hs `patternWith :: v -> [Pattern v] -> Pattern v`.
+Creates a pattern with a value and elements. This is the primary constructor for creating patterns. Equivalent to gram-hs `pattern :: v -> [Pattern v] -> Pattern v`.
 
 ```rust
 impl<V> Pattern<V> {
-    /// Creates a pattern with explicit elements.
+    /// Creates a pattern with a value and elements.
     ///
-    /// Equivalent to gram-hs `patternWith :: v -> [Pattern v] -> Pattern v`.
+    /// This is the primary constructor for creating patterns. Takes a decoration value
+    /// and a list of pattern elements. The elements form the pattern itself; the value
+    /// provides decoration about that pattern.
+    ///
+    /// Equivalent to gram-hs `pattern :: v -> [Pattern v] -> Pattern v`.
     ///
     /// # Arguments
     ///
@@ -67,13 +71,13 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let pattern = Pattern::pattern_with("root".to_string(), vec![
-    ///     Pattern::pattern("child".to_string()),
+    /// let pattern = Pattern::pattern("root".to_string(), vec![
+    ///     Pattern::point("child".to_string()),
     /// ]);
     /// assert_eq!(pattern.value(), "root");
     /// assert_eq!(pattern.length(), 1);
     /// ```
-    pub fn pattern_with(value: V, elements: Vec<Pattern<V>>) -> Self;
+    pub fn pattern(value: V, elements: Vec<Pattern<V>>) -> Self;
 }
 ```
 
@@ -136,7 +140,7 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let pattern = Pattern::pattern("hello".to_string());
+    /// let pattern = Pattern::point("hello".to_string());
     /// let value = pattern.value(); // &String
     /// assert_eq!(value, "hello");
     /// ```
@@ -163,9 +167,9 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    ///     Pattern::pattern("child1".to_string()),
-    ///     Pattern::pattern("child2".to_string()),
+    /// let pattern = Pattern::pattern("parent".to_string(), vec![
+    ///     Pattern::point("child1".to_string()),
+    ///     Pattern::point("child2".to_string()),
     /// ]);
     /// let elements = pattern.elements();
     /// assert_eq!(elements.len(), 2);
@@ -196,12 +200,12 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let atomic = Pattern::pattern("atom".to_string());
+    /// let atomic = Pattern::point("atom".to_string());
     /// assert_eq!(atomic.length(), 0);
     ///
-    /// let pattern = Pattern::pattern_with("pair".to_string(), vec![
-    ///     Pattern::pattern(1),
-    ///     Pattern::pattern(2),
+    /// let pattern = Pattern::pattern("pair".to_string(), vec![
+    ///     Pattern::point(1),
+    ///     Pattern::point(2),
     /// ]);
     /// assert_eq!(pattern.length(), 2);
     /// ```
@@ -230,17 +234,17 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let atomic = Pattern::pattern("atom".to_string());
+    /// let atomic = Pattern::point("atom".to_string());
     /// assert_eq!(atomic.size(), 1);
     ///
-    /// let pattern = Pattern::pattern_with("root".to_string(), vec![
-    ///     Pattern::pattern("child".to_string()),
+    /// let pattern = Pattern::pattern("root".to_string(), vec![
+    ///     Pattern::point("child".to_string()),
     /// ]);
     /// assert_eq!(pattern.size(), 2);
     ///
-    /// let nested = Pattern::pattern_with("root".to_string(), vec![
-    ///     Pattern::pattern("a".to_string()),
-    ///     Pattern::pattern("b".to_string()),
+    /// let nested = Pattern::pattern("root".to_string(), vec![
+    ///     Pattern::point("a".to_string()),
+    ///     Pattern::point("b".to_string()),
     /// ]);
     /// assert_eq!(nested.size(), 3);
     /// ```
@@ -270,17 +274,17 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let atomic = Pattern::pattern("atom".to_string());
+    /// let atomic = Pattern::point("atom".to_string());
     /// assert_eq!(atomic.depth(), 0); // Atomic patterns have depth 0
     ///
-    /// let pattern = Pattern::pattern_with("root".to_string(), vec![
-    ///     Pattern::pattern("child".to_string()),
+    /// let pattern = Pattern::pattern("root".to_string(), vec![
+    ///     Pattern::point("child".to_string()),
     /// ]);
     /// assert_eq!(pattern.depth(), 1);
     ///
-    /// let nested = Pattern::pattern_with("root".to_string(), vec![
-    ///     Pattern::pattern_with("middle".to_string(), vec![
-    ///         Pattern::pattern("inner".to_string()),
+    /// let nested = Pattern::pattern("root".to_string(), vec![
+    ///     Pattern::pattern("middle".to_string(), vec![
+    ///         Pattern::point("inner".to_string()),
     ///     ]),
     /// ]);
     /// assert_eq!(nested.depth(), 2);
@@ -309,11 +313,11 @@ impl<V> Pattern<V> {
     /// ```
     /// use pattern_core::Pattern;
     ///
-    /// let atomic = Pattern::pattern("hello".to_string());
+    /// let atomic = Pattern::point("hello".to_string());
     /// assert!(atomic.is_atomic());
     ///
-    /// let nested = Pattern::pattern_with("parent".to_string(), vec![
-    ///     Pattern::pattern("child".to_string()),
+    /// let nested = Pattern::pattern("parent".to_string(), vec![
+    ///     Pattern::point("child".to_string()),
     /// ]);
     /// assert!(!nested.is_atomic());
     /// ```

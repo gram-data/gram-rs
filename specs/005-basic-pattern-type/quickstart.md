@@ -9,28 +9,28 @@ This guide provides quick examples for using pattern construction functions, acc
 
 ### Creating Patterns
 
-#### Using `Pattern::pattern()`
+#### Using `Pattern::point()`
 
 Create an atomic pattern (no elements):
 
 ```rust
 use pattern_core::Pattern;
 
-let atomic = Pattern::pattern("hello".to_string());
+let atomic = Pattern::point("hello".to_string());
 ```
 
-#### Using `Pattern::pattern_with()`
+#### Using `Pattern::point()`
 
-Create a pattern with a value and elements:
+Create a pattern with a value and elements (primary constructor):
 
 ```rust
 use pattern_core::Pattern;
 
-let pattern = Pattern::pattern_with(
+let pattern = Pattern::point(
     "parent".to_string(),
     vec![
-        Pattern::pattern("child1".to_string()),
-        Pattern::pattern("child2".to_string()),
+        Pattern::point("child1".to_string()),
+        Pattern::point("child2".to_string()),
     ],
 );
 ```
@@ -48,10 +48,10 @@ let pattern = Pattern::from_list("root".to_string(), vec![
     "c".to_string(),
 ]);
 // Equivalent to:
-// Pattern::pattern_with("root".to_string(), vec![
-//     Pattern::pattern("a".to_string()),
-//     Pattern::pattern("b".to_string()),
-//     Pattern::pattern("c".to_string()),
+// Pattern::point("root".to_string(), vec![
+//     Pattern::point("a".to_string()),
+//     Pattern::point("b".to_string()),
+//     Pattern::point("c".to_string()),
 // ])
 ```
 
@@ -62,7 +62,7 @@ let pattern = Pattern::from_list("root".to_string(), vec![
 ```rust
 use pattern_core::Pattern;
 
-let pattern = Pattern::pattern("hello".to_string());
+let pattern = Pattern::point("hello".to_string());
 let value = pattern.value(); // &String
 println!("Value: {}", value);
 ```
@@ -72,9 +72,9 @@ println!("Value: {}", value);
 ```rust
 use pattern_core::Pattern;
 
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 
 let elements = pattern.elements(); // &[Pattern<String>]
@@ -90,11 +90,11 @@ for (i, elem) in elements.iter().enumerate() {
 ```rust
 use pattern_core::Pattern;
 
-let atomic = Pattern::pattern("hello".to_string());
+let atomic = Pattern::point("hello".to_string());
 assert!(atomic.is_atomic());
 
-let nested = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child".to_string()),
+let nested = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child".to_string()),
 ]);
 assert!(!nested.is_atomic());
 ```
@@ -104,10 +104,10 @@ assert!(!nested.is_atomic());
 ```rust
 use pattern_core::Pattern;
 
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
-    Pattern::pattern("child3".to_string()),
+let pattern = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
+    Pattern::point("child3".to_string()),
 ]);
 assert_eq!(pattern.length(), 3);
 ```
@@ -117,12 +117,12 @@ assert_eq!(pattern.length(), 3);
 ```rust
 use pattern_core::Pattern;
 
-let atomic = Pattern::pattern("atom".to_string());
+let atomic = Pattern::point("atom".to_string());
 assert_eq!(atomic.size(), 1); // Just the root node
 
-let pattern = Pattern::pattern_with("root".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::pattern("root".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 assert_eq!(pattern.size(), 3); // root + 2 children
 ```
@@ -132,12 +132,12 @@ assert_eq!(pattern.size(), 3); // root + 2 children
 ```rust
 use pattern_core::Pattern;
 
-let atomic = Pattern::pattern("hello".to_string());
+let atomic = Pattern::point("hello".to_string());
 assert_eq!(atomic.depth(), 0); // Atomic patterns have depth 0
 
-let nested = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern_with("child".to_string(), vec![
-        Pattern::pattern("grandchild".to_string()),
+let nested = Pattern::pattern("parent".to_string(), vec![
+    Pattern::pattern("child".to_string(), vec![
+        Pattern::point("grandchild".to_string()),
     ]),
 ]);
 assert_eq!(nested.depth(), 2); // parent (0) -> child (1) -> grandchild (2)
@@ -152,10 +152,10 @@ Create deeply nested patterns:
 ```rust
 use pattern_core::Pattern;
 
-let deep = Pattern::pattern_with("level1".to_string(), vec![
-    Pattern::pattern_with("level2".to_string(), vec![
-        Pattern::pattern_with("level3".to_string(), vec![
-            Pattern::pattern("level4".to_string()),
+let deep = Pattern::pattern("level1".to_string(), vec![
+    Pattern::pattern("level2".to_string(), vec![
+        Pattern::pattern("level3".to_string(), vec![
+            Pattern::point("level4".to_string()),
         ]),
     ]),
 ]);
@@ -172,10 +172,10 @@ Patterns work with any value type:
 use pattern_core::Pattern;
 
 // String values
-let string_pattern = Pattern::pattern("hello".to_string());
+let string_pattern = Pattern::point("hello".to_string());
 
 // Integer values
-let int_pattern = Pattern::pattern(42);
+let int_pattern = Pattern::point(42);
 
 // Subject values (from feature 004)
 use pattern_core::{Subject, Symbol};
@@ -186,7 +186,7 @@ let subject = Subject {
     labels: HashSet::new(),
     properties: std::collections::HashMap::new(),
 };
-let subject_pattern = Pattern::pattern(subject);
+let subject_pattern = Pattern::point(subject);
 ```
 
 ### Chaining Operations
@@ -196,9 +196,9 @@ Combine construction, access, and inspection:
 ```rust
 use pattern_core::Pattern;
 
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern("child2".to_string()),
+let pattern = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::point("child2".to_string()),
 ]);
 
 // Access and inspect
@@ -221,12 +221,12 @@ use pattern_core::Pattern;
 
 fn build_tree(values: &[&str]) -> Pattern<String> {
     if values.is_empty() {
-        Pattern::pattern("".to_string())
+        Pattern::point("".to_string())
     } else if values.len() == 1 {
-        Pattern::pattern(values[0].to_string())
+        Pattern::point(values[0].to_string())
     } else {
         let mid = values.len() / 2;
-        Pattern::pattern_with(
+        Pattern::pattern(
             values[mid].to_string(),
             vec![
                 build_tree(&values[..mid]),
@@ -257,10 +257,10 @@ fn filter_atomic(pattern: &Pattern<String>) -> Vec<&Pattern<String>> {
     result
 }
 
-let pattern = Pattern::pattern_with("parent".to_string(), vec![
-    Pattern::pattern("child1".to_string()),
-    Pattern::pattern_with("child2".to_string(), vec![
-        Pattern::pattern("grandchild".to_string()),
+let pattern = Pattern::pattern("parent".to_string(), vec![
+    Pattern::point("child1".to_string()),
+    Pattern::pattern("child2".to_string(), vec![
+        Pattern::point("grandchild".to_string()),
     ]),
 ]);
 
@@ -297,7 +297,7 @@ mod tests {
 
     #[test]
     fn test_construction() {
-        let pattern = Pattern::pattern("hello".to_string());
+        let pattern = Pattern::point("hello".to_string());
         assert_eq!(pattern.value(), "hello");
         assert!(pattern.is_atomic());
         assert_eq!(pattern.length(), 0);
@@ -306,8 +306,8 @@ mod tests {
 
     #[test]
     fn test_pattern_with() {
-        let pattern = Pattern::pattern_with("parent".to_string(), vec![
-            Pattern::pattern("child".to_string()),
+        let pattern = Pattern::pattern("parent".to_string(), vec![
+            Pattern::point("child".to_string()),
         ]);
         assert_eq!(pattern.value(), "parent");
         assert_eq!(pattern.length(), 1);
@@ -328,8 +328,8 @@ mod tests {
 
     #[test]
     fn test_accessors() {
-        let pattern = Pattern::pattern_with("parent".to_string(), vec![
-            Pattern::pattern("child".to_string()),
+        let pattern = Pattern::pattern("parent".to_string(), vec![
+            Pattern::point("child".to_string()),
         ]);
         assert_eq!(pattern.value(), "parent");
         assert_eq!(pattern.elements().len(), 1);
@@ -337,9 +337,9 @@ mod tests {
 
     #[test]
     fn test_inspection() {
-        let pattern = Pattern::pattern_with("parent".to_string(), vec![
-            Pattern::pattern_with("child".to_string(), vec![
-                Pattern::pattern("grandchild".to_string()),
+        let pattern = Pattern::pattern("parent".to_string(), vec![
+            Pattern::pattern("child".to_string(), vec![
+                Pattern::point("grandchild".to_string()),
             ]),
         ]);
         assert!(!pattern.is_atomic());
@@ -352,7 +352,7 @@ mod tests {
 
 ## Performance Considerations
 
-- Construction: `pattern()` and `pattern_with()` are O(1), `from_list()` is O(n)
+- Construction: `point()` and `pattern()` are O(1), `from_list()` is O(n)
 - Access: `value()` and `elements()` are O(1) operations
 - Inspection: 
   - `length()` and `is_atomic()` are O(1)
@@ -374,8 +374,8 @@ The functions can be used in WASM modules, though JavaScript bindings are deferr
 
 All functions maintain behavioral equivalence with the gram-hs reference implementation:
 
-- `Pattern::pattern()` matches `pattern :: v -> Pattern v`
-- `Pattern::pattern_with()` matches `patternWith :: v -> [Pattern v] -> Pattern v`
+- `Pattern::point()` matches `pattern :: v -> Pattern v`
+- `Pattern::pattern()` matches `pattern :: v -> [Pattern v] -> Pattern v`
 - `Pattern::from_list()` matches `fromList :: v -> [v] -> Pattern v`
 - `pattern.length()` matches `length :: Pattern v -> Int`
 - `pattern.size()` matches `size :: Pattern v -> Int`

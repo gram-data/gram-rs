@@ -24,9 +24,9 @@
 
 **Purpose**: Project initialization and verification that Pattern type exists
 
-- [ ] T001 Verify Pattern<V> type exists from feature 004 in crates/pattern-core/src/pattern.rs
-- [ ] T002 [P] Create unit test file for construction/access/inspection in tests/unit/pattern_core.rs
-- [ ] T003 [P] Create equivalence test file for behavioral verification in tests/equivalence/pattern_construction_access.rs
+- [x] T001 Verify Pattern<V> type exists from feature 004 in crates/pattern-core/src/pattern.rs
+- [x] T002 [P] Create unit test file for construction/access/inspection in tests/unit/pattern_core.rs
+- [x] T003 [P] Create equivalence test file for behavioral verification in tests/equivalence/pattern_construction_access.rs
 
 ---
 
@@ -40,22 +40,22 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T004 [P] [US1] Test Pattern::pattern() creates atomic pattern in tests/unit/pattern_core.rs
-- [ ] T005 [P] [US1] Test Pattern::pattern_with() creates pattern with elements in tests/unit/pattern_core.rs
-- [ ] T006 [P] [US1] Test Pattern::from_list() creates pattern from value list in tests/unit/pattern_core.rs
-- [ ] T007 [P] [US1] Test construction with string values in tests/unit/pattern_core.rs
-- [ ] T008 [P] [US1] Test construction with integer values in tests/unit/pattern_core.rs
-- [ ] T009 [P] [US1] Test construction with Subject values in tests/unit/pattern_core.rs
-- [ ] T010 [P] [US1] Test nested pattern construction in tests/unit/pattern_core.rs
-- [ ] T011 [P] [US1] Test from_list converts values to atomic patterns in tests/unit/pattern_core.rs
+- [x] T004 [P] [US1] Test Pattern::pattern() creates atomic pattern in tests/unit/pattern_core.rs
+- [x] T005 [P] [US1] Test Pattern::pattern_with() creates pattern with elements in tests/unit/pattern_core.rs
+- [x] T006 [P] [US1] Test Pattern::from_list() creates pattern from value list in tests/unit/pattern_core.rs
+- [x] T007 [P] [US1] Test construction with string values in tests/unit/pattern_core.rs
+- [x] T008 [P] [US1] Test construction with integer values in tests/unit/pattern_core.rs
+- [x] T009 [P] [US1] Test construction with Subject values in tests/unit/pattern_core.rs
+- [x] T010 [P] [US1] Test nested pattern construction in tests/unit/pattern_core.rs
+- [x] T011 [P] [US1] Test from_list converts values to atomic patterns in tests/unit/pattern_core.rs
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Implement Pattern::pattern() associated function in crates/pattern-core/src/pattern.rs
-- [ ] T013 [US1] Implement Pattern::pattern_with() associated function in crates/pattern-core/src/pattern.rs
-- [ ] T014 [US1] Implement Pattern::from_list() associated function in crates/pattern-core/src/pattern.rs
-- [ ] T015 [US1] Add doc comments to construction functions in crates/pattern-core/src/pattern.rs
-- [ ] T016 [US1] Export construction functions in crates/pattern-core/src/lib.rs
+- [x] T012 [US1] Implement Pattern::pattern() associated function in crates/pattern-core/src/pattern.rs
+- [x] T013 [US1] Implement Pattern::pattern_with() associated function in crates/pattern-core/src/pattern.rs
+- [x] T014 [US1] Implement Pattern::from_list() associated function in crates/pattern-core/src/pattern.rs
+- [x] T015 [US1] Add doc comments to construction functions in crates/pattern-core/src/pattern.rs
+- [x] T016 [US1] Export construction functions in crates/pattern-core/src/lib.rs
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently. Developers can construct patterns using `pattern()`, `pattern_with()`, and `from_list()` functions.
 
@@ -71,19 +71,19 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T017 [P] [US2] Test value() returns correct value in tests/unit/pattern_core.rs
-- [ ] T018 [P] [US2] Test elements() returns correct elements slice in tests/unit/pattern_core.rs
-- [ ] T019 [P] [US2] Test value() preserves type information in tests/unit/pattern_core.rs
-- [ ] T020 [P] [US2] Test elements() allows iteration in tests/unit/pattern_core.rs
-- [ ] T021 [P] [US2] Test accessors work with nested patterns in tests/unit/pattern_core.rs
-- [ ] T022 [P] [US2] Test accessors work with different value types in tests/unit/pattern_core.rs
+- [x] T017 [P] [US2] Test value() returns correct value in tests/unit/pattern_core.rs
+- [x] T018 [P] [US2] Test elements() returns correct elements slice in tests/unit/pattern_core.rs
+- [x] T019 [P] [US2] Test value() preserves type information in tests/unit/pattern_core.rs
+- [x] T020 [P] [US2] Test elements() allows iteration in tests/unit/pattern_core.rs
+- [x] T021 [P] [US2] Test accessors work with nested patterns in tests/unit/pattern_core.rs
+- [x] T022 [P] [US2] Test accessors work with different value types in tests/unit/pattern_core.rs
 
 ### Implementation for User Story 2
 
-- [ ] T023 [US2] Implement value() method returning &V in crates/pattern-core/src/pattern.rs
-- [ ] T024 [US2] Implement elements() method returning &[Pattern<V>] in crates/pattern-core/src/pattern.rs
-- [ ] T025 [US2] Add doc comments to accessor methods in crates/pattern-core/src/pattern.rs
-- [ ] T026 [US2] Verify accessors are exported in crates/pattern-core/src/lib.rs
+- [x] T023 [US2] Implement value() method returning &V in crates/pattern-core/src/pattern.rs
+- [x] T024 [US2] Implement elements() method returning &[Pattern<V>] in crates/pattern-core/src/pattern.rs
+- [x] T025 [US2] Add doc comments to accessor methods in crates/pattern-core/src/pattern.rs
+- [x] T026 [US2] Verify accessors are exported in crates/pattern-core/src/lib.rs
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. Developers can construct patterns and access their components.
 
@@ -99,26 +99,26 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T027 [P] [US3] Test length() returns direct element count in tests/unit/pattern_core.rs
-- [ ] T028 [P] [US3] Test size() returns total node count in tests/unit/pattern_core.rs
-- [ ] T029 [P] [US3] Test depth() returns maximum nesting depth in tests/unit/pattern_core.rs
-- [ ] T030 [P] [US3] Test is_atomic() identifies atomic patterns in tests/unit/pattern_core.rs
-- [ ] T031 [P] [US3] Test depth() returns 0 for atomic patterns in tests/unit/pattern_core.rs
-- [ ] T032 [P] [US3] Test depth() calculates nested depth correctly in tests/unit/pattern_core.rs
-- [ ] T033 [P] [US3] Test size() counts all nodes recursively in tests/unit/pattern_core.rs
-- [ ] T034 [P] [US3] Test inspection utilities handle 100+ nesting levels in tests/unit/pattern_core.rs
-- [ ] T035 [P] [US3] Test inspection utilities handle 10,000+ elements in tests/unit/pattern_core.rs
+- [x] T027 [P] [US3] Test length() returns direct element count in tests/unit/pattern_core.rs
+- [x] T028 [P] [US3] Test size() returns total node count in tests/unit/pattern_core.rs
+- [x] T029 [P] [US3] Test depth() returns maximum nesting depth in tests/unit/pattern_core.rs
+- [x] T030 [P] [US3] Test is_atomic() identifies atomic patterns in tests/unit/pattern_core.rs
+- [x] T031 [P] [US3] Test depth() returns 0 for atomic patterns in tests/unit/pattern_core.rs
+- [x] T032 [P] [US3] Test depth() calculates nested depth correctly in tests/unit/pattern_core.rs
+- [x] T033 [P] [US3] Test size() counts all nodes recursively in tests/unit/pattern_core.rs
+- [x] T034 [P] [US3] Test inspection utilities handle 100+ nesting levels in tests/unit/pattern_core.rs
+- [x] T035 [P] [US3] Test inspection utilities handle 10,000+ elements in tests/unit/pattern_core.rs
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Implement length() method returning usize in crates/pattern-core/src/pattern.rs
-- [ ] T037 [US3] Implement size() method returning usize in crates/pattern-core/src/pattern.rs
-- [ ] T038 [US3] Implement depth() method returning usize in crates/pattern-core/src/pattern.rs
-- [ ] T039 [US3] Implement is_atomic() convenience method returning bool in crates/pattern-core/src/pattern.rs
-- [ ] T040 [US3] Ensure depth() returns 0 for atomic patterns in crates/pattern-core/src/pattern.rs
-- [ ] T041 [US3] Ensure size() and depth() handle deep nesting safely (avoid stack overflow) in crates/pattern-core/src/pattern.rs
-- [ ] T042 [US3] Add doc comments to inspection utilities in crates/pattern-core/src/pattern.rs
-- [ ] T043 [US3] Verify inspection utilities are exported in crates/pattern-core/src/lib.rs
+- [x] T036 [US3] Implement length() method returning usize in crates/pattern-core/src/pattern.rs
+- [x] T037 [US3] Implement size() method returning usize in crates/pattern-core/src/pattern.rs
+- [x] T038 [US3] Implement depth() method returning usize in crates/pattern-core/src/pattern.rs
+- [x] T039 [US3] Implement is_atomic() convenience method returning bool in crates/pattern-core/src/pattern.rs
+- [x] T040 [US3] Ensure depth() returns 0 for atomic patterns in crates/pattern-core/src/pattern.rs
+- [x] T041 [US3] Ensure size() and depth() handle deep nesting safely (avoid stack overflow) in crates/pattern-core/src/pattern.rs
+- [x] T042 [US3] Add doc comments to inspection utilities in crates/pattern-core/src/pattern.rs
+- [x] T043 [US3] Verify inspection utilities are exported in crates/pattern-core/src/lib.rs
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 3 should all work independently. Developers can construct patterns, access components, and inspect structure.
 
@@ -134,22 +134,22 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T044 [P] [US4] Port test cases from gram-hs for pattern() construction in tests/equivalence/pattern_construction_access.rs
-- [ ] T045 [P] [US4] Port test cases from gram-hs for patternWith() construction in tests/equivalence/pattern_construction_access.rs
-- [ ] T046 [P] [US4] Port test cases from gram-hs for fromList() construction in tests/equivalence/pattern_construction_access.rs
-- [ ] T047 [P] [US4] Port test cases from gram-hs for value accessor in tests/equivalence/pattern_construction_access.rs
-- [ ] T048 [P] [US4] Port test cases from gram-hs for elements accessor in tests/equivalence/pattern_construction_access.rs
-- [ ] T049 [P] [US4] Port test cases from gram-hs for length() inspection in tests/equivalence/pattern_construction_access.rs
-- [ ] T050 [P] [US4] Port test cases from gram-hs for size() inspection in tests/equivalence/pattern_construction_access.rs
-- [ ] T051 [P] [US4] Port test cases from gram-hs for depth() inspection in tests/equivalence/pattern_construction_access.rs
-- [ ] T052 [P] [US4] Create equivalence checking utilities for comparing gram-rs and gram-hs patterns in crates/pattern-core/src/test_utils/equivalence.rs
+- [x] T044 [P] [US4] Port test cases from gram-hs for pattern() construction in tests/equivalence/pattern_construction_access.rs
+- [x] T045 [P] [US4] Port test cases from gram-hs for patternWith() construction in tests/equivalence/pattern_construction_access.rs
+- [x] T046 [P] [US4] Port test cases from gram-hs for fromList() construction in tests/equivalence/pattern_construction_access.rs
+- [x] T047 [P] [US4] Port test cases from gram-hs for value accessor in tests/equivalence/pattern_construction_access.rs
+- [x] T048 [P] [US4] Port test cases from gram-hs for elements accessor in tests/equivalence/pattern_construction_access.rs
+- [x] T049 [P] [US4] Port test cases from gram-hs for length() inspection in tests/equivalence/pattern_construction_access.rs
+- [x] T050 [P] [US4] Port test cases from gram-hs for size() inspection in tests/equivalence/pattern_construction_access.rs
+- [x] T051 [P] [US4] Port test cases from gram-hs for depth() inspection in tests/equivalence/pattern_construction_access.rs
+- [x] T052 [P] [US4] Create equivalence checking utilities for comparing gram-rs and gram-hs patterns in crates/pattern-core/src/test_utils/equivalence.rs
 
 ### Implementation for User Story 4
 
-- [ ] T053 [US4] Extract test data from gram-hs reference implementation in tests/equivalence/pattern_construction_access.rs
-- [ ] T054 [US4] Implement test case execution framework for equivalence tests in tests/equivalence/pattern_construction_access.rs
-- [ ] T055 [US4] Verify at least 95% of test cases from gram-hs pass (SC-004, SC-005) in tests/equivalence/pattern_construction_access.rs
-- [ ] T056 [US4] Document equivalence test results and any differences in tests/equivalence/pattern_construction_access.rs
+- [x] T053 [US4] Extract test data from gram-hs reference implementation in tests/equivalence/pattern_construction_access.rs
+- [x] T054 [US4] Implement test case execution framework for equivalence tests in tests/equivalence/pattern_construction_access.rs
+- [x] T055 [US4] Verify at least 95% of test cases from gram-hs pass (SC-004, SC-005) in tests/equivalence/pattern_construction_access.rs
+- [x] T056 [US4] Document equivalence test results and any differences in tests/equivalence/pattern_construction_access.rs
 
 **Checkpoint**: At this point, behavioral equivalence with gram-hs should be verified. Patterns constructed in gram-rs match the structure and behavior of equivalent patterns in gram-hs.
 
@@ -159,14 +159,14 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T057 [P] Update module-level documentation in crates/pattern-core/src/pattern.rs
-- [ ] T058 [P] Verify all public API exports are correct in crates/pattern-core/src/lib.rs
-- [ ] T059 [P] Run quickstart.md validation to ensure examples work
-- [ ] T060 [P] Add integration tests for cross-crate usage in tests/unit/pattern_core.rs
-- [ ] T061 [P] Performance testing for deep nesting (100+ levels) in tests/unit/pattern_core.rs
-- [ ] T062 [P] Performance testing for many elements (10,000+) in tests/unit/pattern_core.rs
-- [ ] T063 [P] Verify WASM compilation still works in crates/pattern-core/
-- [ ] T064 Code cleanup and refactoring across pattern.rs module
+- [x] T057 [P] Update module-level documentation in crates/pattern-core/src/pattern.rs
+- [x] T058 [P] Verify all public API exports are correct in crates/pattern-core/src/lib.rs
+- [x] T059 [P] Run quickstart.md validation to ensure examples work
+- [x] T060 [P] Add integration tests for cross-crate usage in tests/unit/pattern_core.rs
+- [x] T061 [P] Performance testing for deep nesting (100+ levels) in tests/unit/pattern_core.rs
+- [x] T062 [P] Performance testing for many elements (10,000+) in tests/unit/pattern_core.rs
+- [x] T063 [P] Verify WASM compilation still works in crates/pattern-core/
+- [x] T064 Code cleanup and refactoring across pattern.rs module
 
 ---
 
