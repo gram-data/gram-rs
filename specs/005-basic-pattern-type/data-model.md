@@ -40,7 +40,7 @@ impl<V> Pattern<V> {
 let atomic = Pattern::point("hello".to_string());
 ```
 
-#### `Pattern::point(value, elements)`
+#### `Pattern::pattern(value, elements)`
 
 Creates a pattern with a value and elements. This is the primary constructor for creating patterns. Takes a decoration value and a list of pattern elements. The elements form the pattern itself; the value provides decoration about that pattern. Equivalent to gram-hs `pattern :: v -> [Pattern v] -> Pattern v`.
 
@@ -66,7 +66,7 @@ impl<V> Pattern<V> {
 
 **Usage**:
 ```rust
-let pattern = Pattern::point("parent".to_string(), vec![
+let pattern = Pattern::pattern("parent".to_string(), vec![
     Pattern::point("child1".to_string()),
     Pattern::point("child2".to_string()),
 ]);
@@ -102,7 +102,7 @@ let pattern = Pattern::from_list("root".to_string(), vec![
     "c".to_string(),
 ]);
 // Equivalent to:
-// Pattern::point("root".to_string(), vec![
+// Pattern::pattern("root".to_string(), vec![
 //     Pattern::point("a".to_string()),
 //     Pattern::point("b".to_string()),
 //     Pattern::point("c".to_string()),
