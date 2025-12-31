@@ -57,21 +57,21 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - [x] Verify behavioral equivalence (against actual Haskell implementation)
 - [x] Test WASM compilation
 
-### 005-basic-pattern-type: Pattern Construction & Access
+### ✅ 005-basic-pattern-type: Pattern Construction & Access
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
 **Documentation Reference**: `../gram-hs/docs/` - Up-to-date documentation about the implementation
 **Historical Reference (Context Only)**: `../gram-hs/specs/002-basic-pattern-type/` - Historical notes from incremental development (may be outdated)
 
-- [ ] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
-- [ ] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
-- [ ] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
-- [ ] Review gram-hs spec: `../gram-hs/specs/002-basic-pattern-type/spec.md` (historical notes, for context only)
-- [ ] Review type signatures: `../gram-hs/specs/002-basic-pattern-type/contracts/type-signatures.md` (historical notes, verify against actual code)
-- [ ] Port pattern construction functions (from actual Haskell source)
-- [ ] Port pattern accessors (value, elements) (from actual Haskell source)
-- [ ] Port pattern inspection utilities (from actual Haskell source)
-- [ ] Port test cases (from actual test files)
-- [ ] Verify equivalence (against actual Haskell implementation)
+- [x] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
+- [x] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
+- [x] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
+- [x] Review gram-hs spec: `../gram-hs/specs/002-basic-pattern-type/spec.md` (historical notes, for context only)
+- [x] Review type signatures: `../gram-hs/specs/002-basic-pattern-type/contracts/type-signatures.md` (historical notes, verify against actual code)
+- [x] Port pattern construction functions (from actual Haskell source)
+- [x] Port pattern accessors (value, elements) (from actual Haskell source)
+- [x] Port pattern inspection utilities (from actual Haskell source)
+- [x] Port test cases (from actual test files)
+- [x] Verify equivalence (against actual Haskell implementation)
 
 ### 006-pattern-structure-review: Pattern Structure Validation
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
