@@ -1048,7 +1048,7 @@ mod pattern_construction_tests {
 
     #[test]
     fn test_pattern_creates_pattern_with_elements() {
-        // T005 [US1] Test Pattern::point() creates pattern with elements
+        // T005 [US1] Test Pattern::pattern() creates pattern with elements
         let pattern = Pattern::pattern(
             "parent".to_string(),
             vec![
@@ -1106,8 +1106,8 @@ mod pattern_construction_tests {
     #[test]
     fn test_nested_pattern_construction() {
         // T010 [US1] Test nested pattern construction
-        let nested = Pattern::point("parent".to_string(), vec![
-            Pattern::point("child".to_string(), vec![
+        let nested = Pattern::pattern("parent".to_string(), vec![
+            Pattern::pattern("child".to_string(), vec![
                 Pattern::point("grandchild".to_string()),
             ]),
         ]);

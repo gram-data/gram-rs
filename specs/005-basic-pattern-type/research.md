@@ -15,7 +15,7 @@
   2. `pattern :: v -> [Pattern v] -> Pattern v` - Creates pattern with explicit elements (primary constructor)
   3. `fromList :: v -> [v] -> Pattern v` - Creates pattern from list of values (converts values to atomic patterns)
 - **Rationale**: 
-  - `pattern` provides convenience for atomic patterns (common case)
+  - `point` provides convenience for atomic patterns (common case)
   - `pattern` provides primary constructor with explicit elements
   - `fromList` provides convenience for creating patterns from value lists
 - **Alternatives considered**: 
@@ -44,7 +44,7 @@ impl<V> Pattern<V> {
     pub fn from_list(value: V, values: Vec<V>) -> Self {
         Pattern {
             value,
-            elements: values.into_iter().map(Pattern::pattern).collect(),
+            elements: values.into_iter().map(Pattern::point).collect(),
         }
     }
 }

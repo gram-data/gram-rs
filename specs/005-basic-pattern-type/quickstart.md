@@ -48,7 +48,7 @@ let pattern = Pattern::from_list("root".to_string(), vec![
     "c".to_string(),
 ]);
 // Equivalent to:
-// Pattern::point("root".to_string(), vec![
+// Pattern::pattern("root".to_string(), vec![
 //     Pattern::point("a".to_string()),
 //     Pattern::point("b".to_string()),
 //     Pattern::point("c".to_string()),
