@@ -36,10 +36,10 @@ proptest! {
     fn prop_any_value_consistent_with_iterator_any(pattern in pattern_strategy()) {
         // T018: any_value consistent with any() over values()
         let predicate = |v: &i32| *v > 0;
-        
+
         let any_value_result = pattern.any_value(predicate);
         let values_any_result = pattern.values().into_iter().any(|v| predicate(v));
-        
+
         prop_assert_eq!(any_value_result, values_any_result,
             "any_value should match Iterator::any over values()");
     }
@@ -49,10 +49,10 @@ proptest! {
         // Additional property: any_value(p) || any_value(!p) should be true for non-empty patterns
         let predicate = |v: &i32| *v > 0;
         let neg_predicate = |v: &i32| *v <= 0;
-        
+
         let has_positive = pattern.any_value(predicate);
         let has_non_positive = pattern.any_value(neg_predicate);
-        
+
         // At least one should be true (unless pattern is somehow empty of values)
         // For patterns with values, this should always hold
         if pattern.size() > 0 {
@@ -67,11 +67,10 @@ proptest! {
         // where loose_predicate is less restrictive
         let strict = |v: &i32| *v > 10;
         let loose = |v: &i32| *v > 5;
-        
+
         if pattern.any_value(strict) {
             prop_assert!(pattern.any_value(loose),
                 "If a stricter predicate matches, a looser one should too");
         }
     }
 }
-
