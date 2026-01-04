@@ -284,9 +284,7 @@ impl<T> Combinable for Vec<T> {
 /// assert_eq!(result, ());
 /// ```
 impl Combinable for () {
-    fn combine(self, _other: Self) -> Self {
-        ()
-    }
+    fn combine(self, _other: Self) -> Self {}
 }
 
 #[cfg(test)]
