@@ -1160,4 +1160,95 @@ impl<V> Pattern<V> {
             pattern_desc
         )
     }
+
+    // ====================================================================================
+    // Traversable Operations
+    // ====================================================================================
+
+    /// Applies an effectful function returning `Option` to all values in the pattern.
+    ///
+    /// Traverses the pattern in depth-first, root-first order (pre-order traversal).
+    /// If any transformation returns `None`, the entire operation returns `None`.
+    /// If all transformations return `Some`, returns `Some(Pattern<W>)` with transformed values.
+    ///
+    /// This implements the Traversable pattern for Option, providing:
+    /// - Structure preservation: Output pattern has same shape as input
+    /// - Effect sequencing: Short-circuits on first None
+    /// - All-or-nothing semantics: All values must be Some for success
+    ///
+    /// # Type Parameters
+    ///
+    /// * `W` - The type of transformed values
+    /// * `F` - The transformation function type
+    ///
+    /// # Arguments
+    ///
+    /// * `f` - A function that transforms values of type `&V` to `Option<W>`
+    ///
+    /// # Returns
+    ///
+    /// * `Some(Pattern<W>)` if all transformations succeed
+    /// * `None` if any transformation returns None (short-circuit)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use pattern_core::Pattern;
+    ///
+    /// // Successful traversal - all values parse
+    /// let pattern = Pattern::pattern("1", vec![Pattern::point("2")]);
+    /// let result = pattern.traverse_option(|s| s.parse::<i32>().ok());
+    /// assert!(result.is_some());
+    /// assert_eq!(result.unwrap().value, 1);
+    ///
+    /// // Failed traversal - one value doesn't parse
+    /// let pattern = Pattern::pattern("1", vec![Pattern::point("invalid")]);
+    /// let result = pattern.traverse_option(|s| s.parse::<i32>().ok());
+    /// assert!(result.is_none());
+    /// ```
+    ///
+    /// # Traversable Laws
+    ///
+    /// This implementation satisfies the traversable laws:
+    /// - Identity: `pattern.traverse_option(|v| Some(*v)) == Some(pattern.clone())`
+    /// - Structure preservation: If successful, output has same size, depth, and length
+    ///
+    /// # Performance
+    ///
+    /// - Time: O(n) where n is the number of nodes
+    /// - Space: O(n) for the new pattern + O(d) stack for recursion depth d
+    /// - Short-circuits on first None without processing remaining values
+    pub fn traverse_option<W, F>(&self, f: F) -> Option<Pattern<W>>
+    where
+        F: Fn(&V) -> Option<W>,
+    {
+        self.traverse_option_with(&f)
+    }
+
+    /// Internal helper for `traverse_option` that takes function by reference.
+    ///
+    /// This enables efficient recursion without cloning the closure.
+    /// Public `traverse_option` passes closure by value for ergonomics,
+    /// internal `traverse_option_with` passes closure by reference for efficiency.
+    fn traverse_option_with<W, F>(&self, f: &F) -> Option<Pattern<W>>
+    where
+        F: Fn(&V) -> Option<W>,
+    {
+        // Transform root value first (short-circuits on None via ?)
+        let new_value = f(&self.value)?;
+
+        // Transform elements recursively (left to right)
+        // Iterator::collect() handles Option sequencing - stops on first None
+        let new_elements: Option<Vec<Pattern<W>>> = self
+            .elements
+            .iter()
+            .map(|elem| elem.traverse_option_with(f))
+            .collect();
+
+        // Construct new pattern with transformed value and elements
+        Some(Pattern {
+            value: new_value,
+            elements: new_elements?,
+        })
+    }
 }
