@@ -276,7 +276,10 @@ fn fold_handles_balanced_tree_with_8000_plus_nodes() {
 
     assert_eq!(count, 8191);
 
-    println!("Fold of 8191 nodes (balanced tree depth 12) took: {:?}", duration);
+    println!(
+        "Fold of 8191 nodes (balanced tree depth 12) took: {:?}",
+        duration
+    );
     assert!(duration.as_millis() < 50);
 }
 
@@ -342,4 +345,3 @@ fn fold_large_pattern_preserves_order() {
     // Should end with "...997,998,999"
     assert!(concat.ends_with("997,998,999"));
 }
-

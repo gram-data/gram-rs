@@ -219,7 +219,10 @@ fn bench_fold_vs_values_iterator(c: &mut Criterion) {
     // Using values() then iterator fold
     group.bench_function("values_then_iter_fold", |b| {
         b.iter(|| {
-            let sum: i32 = pattern.values().iter().fold(0, |acc, &&v| black_box(acc + v));
+            let sum: i32 = pattern
+                .values()
+                .iter()
+                .fold(0, |acc, &&v| black_box(acc + v));
             black_box(sum)
         });
     });
@@ -247,7 +250,10 @@ fn bench_map_then_fold(c: &mut Criterion) {
     // Map then fold
     group.bench_function("map_then_fold", |b| {
         b.iter(|| {
-            let sum = pattern.clone().map(|&v| v * 2).fold(0i32, |acc, v| black_box(acc + v));
+            let sum = pattern
+                .clone()
+                .map(|&v| v * 2)
+                .fold(0i32, |acc, v| black_box(acc + v));
             black_box(sum)
         });
     });
@@ -280,4 +286,3 @@ criterion_group!(
 );
 
 criterion_main!(benches);
-
