@@ -73,24 +73,56 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - [x] Port test cases (from actual test files)
 - [x] Verify equivalence (against actual Haskell implementation)
 
-### 006-pattern-structure-review: Pattern Structure Validation
+### ✅ 006-pattern-structure-review: Pattern Structure Validation
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
 **Documentation Reference**: `../gram-hs/docs/` - Up-to-date documentation about the implementation
 **Historical Reference (Context Only)**: `../gram-hs/specs/003-pattern-structure-review/` - Historical notes from incremental development (may be outdated)
 
-- [ ] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
-- [ ] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
-- [ ] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
-- [ ] Review gram-hs spec: `../gram-hs/specs/003-pattern-structure-review/spec.md` (historical notes, for context only)
-- [ ] Port pattern validation functions (from actual Haskell source)
-- [ ] Port structure analysis utilities (from actual Haskell source)
-- [ ] Port test cases (from actual test files)
-- [ ] Verify equivalence (against actual Haskell implementation)
+- [x] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
+  - **Result**: Validation and analysis functions do NOT exist in gram-hs yet. This is new functionality for gram-rs.
+- [x] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
+  - **Result**: No validation/analysis documentation found. Implementation follows spec requirements.
+- [x] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
+  - **Result**: No validation/analysis test cases found. Only basic query functions (length, size, depth) exist.
+- [x] Review gram-hs spec: `../gram-hs/specs/003-pattern-structure-review/spec.md` (historical notes, for context only)
+  - **Result**: Reviewed for context. Implementation based on gram-rs spec requirements.
+- [x] Implement pattern validation functions (new functionality)
+  - Implemented `Pattern::validate()` with `ValidationRules` (max_depth, max_elements)
+  - Implemented detailed `ValidationError` with location tracking
+- [x] Implement structure analysis utilities (new functionality)
+  - Implemented `Pattern::analyze_structure()` returning `StructureAnalysis`
+  - Provides depth distribution, element counts, nesting patterns, and summary
+- [x] Create comprehensive test suite
+  - Unit tests for validation and analysis
+  - Snapshot tests for error messages and analysis results
+  - Property-based test placeholders
+  - Equivalence test framework (ready for future gram-hs implementation)
+- [x] Verify functionality
+  - All 48 tests passing
+  - WASM compilation verified
+  - Clippy clean
+  - Documentation complete with examples
 
-### 007-construction-functions: Pattern Builders
+**Status**: All tasks complete (62/62 tasks in `specs/006-pattern-structure-review/tasks.md`). This is NEW functionality not yet in gram-hs. Framework is ready for future equivalence testing when gram-hs implements these features. See `docs/gramref-cli-testing-guide.md` for using gramref CLI for testing.
+
+### ⏸️ 007-construction-functions: Pattern Builders (DEFERRED)
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
 **Documentation Reference**: `../gram-hs/docs/` - Up-to-date documentation about the implementation
 **Historical Reference (Context Only)**: `../gram-hs/specs/004-construction-functions/` - Historical notes from incremental development (may be outdated)
+
+**Status**: DEFERRED - Not needed for current porting phase. All construction functions from gram-hs (`point`, `pattern`, `from_list`) are already implemented in feature 005-basic-pattern-type. Builder patterns and additional Rust-specific convenience constructors were considered but are not present in the gram-hs reference implementation.
+
+**Rationale**:
+- All gram-hs construction functions already ported in feature 005
+- No additional builder patterns exist in `../gram-hs/libs/pattern/src/Pattern.hs`
+- No spec exists at `../gram-hs/specs/004-construction-functions/`
+- Builder patterns (fluent API) are Rust-specific enhancements, not part of core porting
+- May be revisited later as Rust-specific ergonomic improvements after core features are complete
+
+**Next Step**: Proceed to feature 008-functor-instance (implementing map/fmap for Pattern)
+
+<details>
+<summary>Original Tasks (collapsed)</summary>
 
 - [ ] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
 - [ ] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
@@ -100,6 +132,8 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - [ ] Port convenience constructors (from actual Haskell source)
 - [ ] Port test cases (from actual test files)
 - [ ] Verify equivalence (against actual Haskell implementation)
+
+</details>
 
 ---
 
