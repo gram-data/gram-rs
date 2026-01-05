@@ -120,7 +120,7 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 
 ## Phase 3: Pattern Typeclass Instances (Traits)
 
-**Progress**: 7/11 features complete
+**Progress**: 8/11 features complete
 - ✅ 008: Functor instance (idiomatic `map` method)
 - ✅ 009: Foldable instance (fold operations)
 - ✅ 010: Traversable instance (effectful transformations)
@@ -128,7 +128,8 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - ✅ 012: Ord instance (ordering and comparison)
 - ✅ 013: Semigroup instance (Combinable trait, associative combination)
 - ✅ 014: Monoid instance (Default trait, identity element)
-- ⏸️ 015-018: Remaining typeclass instances (pending)
+- ✅ 015: Hash instance (hashing for HashMap/HashSet)
+- ⏸️ 016-018: Remaining typeclass instances (pending)
 
 ### ✅ 008-functor-instance: Functor Trait
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
@@ -262,18 +263,29 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - `crates/pattern-core/tests/monoid_integration.rs` (24 integration tests with iterators)
 **Status**: Complete - identity element implemented with comprehensive test coverage, property-based verification of monoid laws (left/right identity), and behavioral equivalence with gram-hs confirmed. Uses idiomatic Rust Default trait instead of custom Monoid trait.
 
-### 015-hashable-instance: Hash Trait
+### 015-hashable-instance: Hash Trait ✅
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
-**Documentation Reference**: `../gram-hs/docs/` - Up-to-date documentation about the implementation
-**Historical Reference (Context Only)**: `../gram-hs/specs/012-hashable-instance/` - Historical notes from incremental development (may be outdated)
+**Spec**: `specs/015-hashable-instance/spec.md` - Implementation-agnostic specification
+**Plan**: `specs/015-hashable-instance/plan.md` - Implementation plan and design decisions
+**Tasks**: `specs/015-hashable-instance/tasks.md` - 42 detailed implementation tasks (all complete)
 
-- [ ] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
-- [ ] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
-- [ ] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
-- [ ] Review gram-hs spec: `../gram-hs/specs/012-hashable-instance/spec.md` (historical notes, for context only)
-- [ ] Implement `Hash` trait for patterns (from actual Haskell source)
-- [ ] Port test cases (from actual test files)
-- [ ] Verify equivalence (against actual Haskell implementation)
+- [x] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
+- [x] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
+- [x] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
+- [x] Review gram-hs spec: `../gram-hs/specs/012-hashable-instance/spec.md` (historical notes, for context only)
+- [x] Implement `Hash` trait for patterns (from actual Haskell source)
+- [x] Add Hash to Symbol type
+- [x] Port test cases (from actual test files)
+- [x] Verify equivalence (against actual Haskell implementation)
+
+**Implementation**: 
+- `crates/pattern-core/src/pattern.rs` - Hash trait implementation for Pattern<V> where V: Hash
+- `crates/pattern-core/src/subject.rs` - Hash derive added to Symbol
+**Tests**: 
+- `crates/pattern-core/tests/hash_basic.rs` (14 unit tests)
+- `crates/pattern-core/tests/hash_consistency.rs` (8 property tests with proptest)
+- `crates/pattern-core/tests/hash_integration.rs` (13 integration tests)
+**Status**: Complete - hashing support implemented with comprehensive test coverage, property-based verification of hash/eq consistency, and behavioral equivalence with gram-hs confirmed. Enables O(1) HashMap/HashSet usage for patterns.
 
 ### 016-predicate-matching: Pattern Matching
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code

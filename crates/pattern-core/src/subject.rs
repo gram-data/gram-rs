@@ -18,7 +18,7 @@ use std::fmt;
 /// let symbol = Symbol("n".to_string());
 /// assert_eq!(symbol.0, "n");
 /// ```
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Symbol(pub String);
 
 impl fmt::Debug for Symbol {
