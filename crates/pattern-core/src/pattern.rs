@@ -34,6 +34,7 @@
 
 use std::cmp::Ordering;
 use std::fmt;
+use std::hash::{Hash, Hasher};
 
 /// A recursive, nested structure (s-expression-like) that is generic over value type `V`.
 ///
@@ -101,6 +102,10 @@ use std::fmt;
 /// - `PartialOrd`, `Ord`: Patterns can be ordered when `V: PartialOrd` (or `Ord`)
 ///   - Uses value-first lexicographic ordering: compares values, then elements
 ///   - Enables sorting, min/max operations, and use in ordered collections (BTreeSet, BTreeMap)
+/// - `Hash`: Patterns can be hashed when `V: Hash` for use in HashMap/HashSet
+///   - Enables pattern deduplication and caching
+///   - Structure-preserving: different structures produce different hashes
+///   - Note: `Pattern<Subject>` is NOT hashable (Subject contains f64)
 /// - `Debug`: Structured representation for debugging (with truncation for deep nesting)
 /// - `Display`: Human-readable representation
 ///
@@ -2382,5 +2387,192 @@ where
     /// ```
     fn default() -> Self {
         Pattern::point(V::default())
+    }
+}
+
+// ============================================================================
+// Hash Trait Implementation
+// ============================================================================
+
+/// Provides hashing support for patterns where the value type implements `Hash`.
+///
+/// This enables patterns to be used as keys in `HashMap` and elements in `HashSet`,
+/// enabling efficient pattern deduplication, caching, and set-based operations.
+///
+/// # Hash/Eq Consistency
+///
+/// This implementation guarantees that equal patterns produce equal hashes:
+/// - If `p1 == p2`, then `hash(p1) == hash(p2)`
+/// - This consistency is required for correct HashMap/HashSet behavior
+///
+/// # Structure-Preserving Hashing
+///
+/// The hash incorporates both the value and the element structure recursively:
+/// - Different patterns with the same values produce different hashes
+/// - The nesting structure and element order affect the hash
+/// - Atomic patterns hash differently from compound patterns
+///
+/// # Implementation
+///
+/// The implementation hashes both components of a pattern:
+/// 1. Hash the value using `V::hash`
+/// 2. Hash the elements vector (which recursively hashes nested patterns)
+///
+/// This approach leverages `Vec<T>`'s built-in `Hash` implementation, which
+/// automatically handles recursive hashing of nested patterns correctly.
+///
+/// # Type Constraints
+///
+/// Only patterns where `V: Hash` can be hashed. This means:
+/// - ✅ `Pattern<String>` is hashable (String implements Hash)
+/// - ✅ `Pattern<Symbol>` is hashable (Symbol implements Hash)
+/// - ✅ `Pattern<i32>` is hashable (integers implement Hash)
+/// - ❌ `Pattern<Subject>` is NOT hashable (Subject contains f64)
+/// - ❌ `Pattern<f64>` is NOT hashable (floats don't implement Hash)
+///
+/// This is correct behavior - the type system prevents hashing types that
+/// shouldn't be hashed due to problematic equality semantics (e.g., NaN != NaN for floats).
+///
+/// # Examples
+///
+/// ## Using Patterns in HashSet (Deduplication)
+///
+/// ```rust
+/// use pattern_core::Pattern;
+/// use std::collections::HashSet;
+///
+/// let p1 = Pattern::point("hello".to_string());
+/// let p2 = Pattern::point("world".to_string());
+/// let p3 = Pattern::point("hello".to_string());  // Duplicate of p1
+///
+/// let mut set = HashSet::new();
+/// set.insert(p1);
+/// set.insert(p2);
+/// set.insert(p3);  // Automatically deduplicated
+///
+/// assert_eq!(set.len(), 2);  // Only unique patterns
+/// ```
+///
+/// ## Using Patterns as HashMap Keys (Caching)
+///
+/// ```rust
+/// use pattern_core::Pattern;
+/// use std::collections::HashMap;
+///
+/// let mut cache: HashMap<Pattern<String>, i32> = HashMap::new();
+///
+/// let p1 = Pattern::point("key1".to_string());
+/// let p2 = Pattern::point("key2".to_string());
+///
+/// cache.insert(p1.clone(), 42);
+/// cache.insert(p2.clone(), 100);
+///
+/// assert_eq!(cache.get(&p1), Some(&42));
+/// assert_eq!(cache.get(&p2), Some(&100));
+/// ```
+///
+/// ## Hash Consistency with Equality
+///
+/// ```rust
+/// use pattern_core::Pattern;
+/// use std::collections::hash_map::DefaultHasher;
+/// use std::hash::{Hash, Hasher};
+///
+/// fn hash_pattern<V: Hash>(p: &Pattern<V>) -> u64 {
+///     let mut hasher = DefaultHasher::new();
+///     p.hash(&mut hasher);
+///     hasher.finish()
+/// }
+///
+/// let p1 = Pattern::point("test".to_string());
+/// let p2 = Pattern::point("test".to_string());
+///
+/// // Equal patterns have equal hashes
+/// assert_eq!(p1, p2);
+/// assert_eq!(hash_pattern(&p1), hash_pattern(&p2));
+/// ```
+///
+/// ## Structure Distinguishes Hashes
+///
+/// ```rust
+/// use pattern_core::Pattern;
+/// use std::collections::hash_map::DefaultHasher;
+/// use std::hash::{Hash, Hasher};
+///
+/// fn hash_pattern<V: Hash>(p: &Pattern<V>) -> u64 {
+///     let mut hasher = DefaultHasher::new();
+///     p.hash(&mut hasher);
+///     hasher.finish()
+/// }
+///
+/// // Same values, different structures
+/// let atomic = Pattern::point("value".to_string());
+/// let compound = Pattern::pattern(
+///     "value".to_string(),
+///     vec![Pattern::point("child".to_string())]
+/// );
+///
+/// // Different structures produce different hashes
+/// assert_ne!(atomic, compound);
+/// // Note: Hash inequality is not guaranteed but expected
+/// // (hash collisions are possible but rare)
+/// ```
+///
+/// # Performance
+///
+/// - **Time Complexity**: O(n) where n is the total number of nodes in the pattern
+/// - **Space Complexity**: O(1) (hash computation uses constant space)
+/// - Hashing is typically very fast (microseconds even for large patterns)
+/// - Results are cached in HashMap/HashSet (computed once per pattern)
+///
+/// # Comparison with Haskell
+///
+/// This implementation is behaviorally equivalent to the Haskell `Hashable` instance:
+///
+/// ```haskell
+/// instance Hashable v => Hashable (Pattern v) where
+///   hashWithSalt salt (Pattern v es) =
+///     salt `hashWithSalt` v `hashWithSalt` es
+/// ```
+///
+/// Both implementations hash the value and elements in the same order, ensuring
+/// equivalent hash values for equivalent patterns.
+///
+/// # See Also
+///
+/// - `HashMap` - For using patterns as keys in hash-based maps
+/// - `HashSet` - For pattern deduplication and set operations
+/// - [`Pattern::combine`] - Pattern combination (works well with cached patterns)
+/// - [`Eq`] - Equality trait that Hash must be consistent with
+impl<V: Hash> Hash for Pattern<V> {
+    /// Hashes this pattern into the provided hasher.
+    ///
+    /// Computes the hash by:
+    /// 1. Hashing the value component
+    /// 2. Hashing the elements vector (recursively hashes nested patterns)
+    ///
+    /// This ensures that equal patterns produce equal hashes while different
+    /// structures produce different hashes.
+    ///
+    /// # Parameters
+    ///
+    /// * `state` - The hasher to write the hash into
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use pattern_core::Pattern;
+    /// use std::collections::hash_map::DefaultHasher;
+    /// use std::hash::{Hash, Hasher};
+    ///
+    /// let pattern = Pattern::point("test".to_string());
+    ///
+    /// let mut hasher = DefaultHasher::new();
+    /// pattern.hash(&mut hasher);
+    /// let hash_value = hasher.finish();
+    /// ```
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.value.hash(state);
+        self.elements.hash(state);
     }
 }
