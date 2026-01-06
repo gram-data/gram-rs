@@ -117,7 +117,9 @@ fn test_serialize_subject_pattern_with_elements() {
     let pattern = Pattern::pattern(subject_with_id("team"), vec![elem1, elem2]);
     let result = serialize_pattern(&pattern);
     assert!(result.is_ok());
-    assert_eq!(result.unwrap(), "[team | (alice), (bob)]");
+    // Per spec: 2-element patterns with atomic elements serialize as relationships
+    // regardless of identifier, so this becomes a relationship with edge identifier
+    assert_eq!(result.unwrap(), "(alice)-[team]->(bob)");
 }
 
 #[test]

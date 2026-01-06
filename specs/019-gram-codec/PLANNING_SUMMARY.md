@@ -225,8 +225,8 @@ crates/gram-codec/
 
 ```toml
 [dependencies]
-tree-sitter = "0.20"
-tree-sitter-gram = { path = "../../../tree-sitter-gram/bindings/rust" }
+tree-sitter = "0.25"
+tree-sitter-gram = "0.2"
 pattern-core = { path = "../pattern-core" }
 
 [features]

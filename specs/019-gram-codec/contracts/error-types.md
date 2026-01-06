@@ -514,7 +514,7 @@ mod integration_tests {
 
 ```toml
 [dependencies]
-tree-sitter = "0.20"
+tree-sitter = "0.25"
 ```
 
 ## Future Extensions

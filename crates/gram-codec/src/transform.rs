@@ -364,11 +364,18 @@ fn handle_arrow_type(
 
 /// Extract edge subject from relationship pattern (labels/properties between arrows)
 fn extract_edge_subject(node: &tree_sitter::Node, input: &str) -> Result<Subject, ParseError> {
-    // Extract labels and properties from the "kind" (arrow) node
-    // Parse tree: (relationship_pattern ... kind: (right_arrow labels: ... record: ...) ...)
+    // Extract identifier, labels, and properties from the "kind" (arrow) node
+    // Parse tree: (relationship_pattern ... kind: (right_arrow identifier: ... labels: ... record: ...) ...)
     let kind_node = node
         .child_by_field_name("kind")
         .ok_or_else(|| ParseError::missing_field(node, "kind"))?;
+
+    // Extract identifier from the arrow node (if present)
+    let identifier = if let Some(id_node) = kind_node.child_by_field_name("identifier") {
+        extract_identifier(&id_node, input)?
+    } else {
+        String::new()
+    };
 
     // Extract labels from the arrow node
     let labels = if let Some(labels_node) = kind_node.child_by_field_name("labels") {
@@ -384,9 +391,8 @@ fn extract_edge_subject(node: &tree_sitter::Node, input: &str) -> Result<Subject
         HashMap::new()
     };
 
-    // Edge subject has no identifier, only labels and properties
     Ok(Subject {
-        identity: Symbol(String::new()),
+        identity: Symbol(identifier),
         labels,
         properties,
     })

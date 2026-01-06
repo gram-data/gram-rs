@@ -438,7 +438,7 @@ mod property_tests {
 
 ```toml
 [dependencies]
-tree-sitter = "0.20"
+tree-sitter = "0.25"
 
 [dev-dependencies]
 proptest = "1.0"

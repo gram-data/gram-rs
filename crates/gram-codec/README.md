@@ -239,14 +239,24 @@ match parse_gram_notation(invalid_gram) {
 
 ## Examples
 
+> 📚 **See [`../../examples/gram-codec-README.md`](../../examples/gram-codec-README.md) for complete examples across all platforms!**
+
 Run the included examples:
 
 ```bash
-# Basic usage
+# Basic usage (10 examples)
 cargo run --package gram-codec --example basic_usage
 
-# Advanced usage
+# Advanced usage (10 examples)
 cargo run --package gram-codec --example advanced_usage
+
+# Interactive Python demo
+python examples/gram-codec-python/demo.py
+
+# Interactive browser demo
+# (After building: wasm-pack build --target web . -- --features wasm)
+python3 -m http.server 8000
+# Open http://localhost:8000/examples/gram-codec-wasm-web/
 ```
 
 ## Testing
@@ -254,17 +264,27 @@ cargo run --package gram-codec --example advanced_usage
 Run the comprehensive test suite:
 
 ```bash
-# All tests
+# All tests (159 tests total)
 cargo test --package gram-codec
 
 # Specific test suite
-cargo test --package gram-codec --test parser_tests
-cargo test --package gram-codec --test serializer_tests
-cargo test --package gram-codec --test value_types_tests
-cargo test --package gram-codec --test arrow_types_tests
-cargo test --package gram-codec --test edge_cases_tests
-cargo test --package gram-codec --test advanced_features_tests
+cargo test --package gram-codec --test parser_tests              # 18 tests
+cargo test --package gram-codec --test serializer_tests          # 15 tests
+cargo test --package gram-codec --test value_types_tests         # 13 tests
+cargo test --package gram-codec --test arrow_types_tests         # 14 tests (1 ignored)
+cargo test --package gram-codec --test arrow_style_variants_tests # 19 tests
+cargo test --package gram-codec --test edge_cases_tests          # 28 tests
+cargo test --package gram-codec --test advanced_features_tests   # 22 tests
 ```
+
+### Test Coverage
+
+- **159 tests total** (158 passing + 1 ignored)
+- Unit tests for error handling, parser core, serializer core
+- Comprehensive arrow style variant tests (all 10 visual forms documented)
+- Integration tests for all gram syntax forms
+- Edge case handling (nesting, whitespace, comments, error recovery)
+- Round-trip correctness validation
 
 ## Grammar Authority
 
@@ -289,12 +309,68 @@ The codec consists of several modules:
 - **`value`**: Value enum for property types (String, Integer, Decimal, Boolean, Array, Range)
 - **`error`**: Error types with location information and error recovery
 
-## Future Work
+## Multi-Platform Support
 
-- **WASM Support**: WebAssembly bindings for browser/Node.js usage (see `src/wasm.rs`)
-- **Python Bindings**: PyO3 bindings for Python integration (see `src/python.rs`)
-- **Performance Optimization**: Benchmarks and performance tuning
-- **Corpus Testing**: Automated testing against tree-sitter-gram test corpus
+### WASM (WebAssembly)
+
+Build for browser and Node.js environments:
+
+```bash
+# Using wasm-pack
+wasm-pack build --target web crates/gram-codec -- --features wasm
+
+# JavaScript usage
+import init, { parse_gram, validate_gram, round_trip } from './pkg/gram_codec.js';
+await init();
+const result = parse_gram("(hello)-->(world)");
+```
+
+**Examples:**
+- `../../examples/gram-codec-wasm-web/` - Interactive browser demo with UI
+- `../../examples/gram-codec-wasm-node/` - Node.js command-line examples
+
+### Python
+
+Build and install Python bindings:
+
+```bash
+pip install maturin
+cd crates/gram-codec
+maturin develop --features python
+
+# Python usage
+from gram_codec import parse_gram, validate_gram, round_trip
+result = parse_gram("(hello)-->(world)")
+print(f"Parsed {result['pattern_count']} patterns")
+```
+
+**Examples:**
+- `../../examples/gram-codec-python/demo.py` - Interactive demo with REPL mode
+- `../../examples/gram-codec-python/quickstart.py` - Quick 5-minute introduction
+- `../../examples/gram-codec-python/gram_codec.py` - Template with 10 example functions
+
+See `pyproject.toml` for packaging configuration.
+
+## Performance
+
+The codec includes comprehensive benchmarks:
+
+```bash
+# Run all benchmarks
+cargo bench --package gram-codec
+
+# Specific benchmarks
+cargo bench --package gram-codec --bench codec_benchmarks -- parse_simple_nodes
+cargo bench --package gram-codec --bench codec_benchmarks -- round_trip
+```
+
+Benchmarks cover:
+- Parsing simple nodes (10, 100, 1000 patterns)
+- Parsing relationships and chains
+- Parsing subject patterns with many elements
+- Serialization (single and multiple patterns)
+- Round-trip correctness (parse → serialize → parse)
+- Complex patterns with mixed syntax
 
 ## Constitutional Compliance
 

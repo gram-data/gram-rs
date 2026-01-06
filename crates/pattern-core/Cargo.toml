@@ -28,3 +28,7 @@ harness = false
 name = "semigroup_benchmarks"
 harness = false
 
+[[example]]
+name = "comonad_usage"
+path = "../../examples/pattern-core/comonad_usage.rs"
+

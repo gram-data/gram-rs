@@ -104,13 +104,14 @@ fn select_format(pattern: &Pattern<Subject>) -> GramFormat {
 /// True if:
 /// - Exactly 2 elements
 /// - Both elements are atomic (0 elements each)
-/// - Subject has no identifier (or identifier is empty)
-///   - Relationships use empty subject or only labels/properties for the edge
+///
+/// Per spec: relationship notation is used when both elements are atomic,
+/// regardless of whether the parent pattern has an identifier/labels/properties.
+/// Edge identifiers, labels, and properties are serialized as `[value]` between the nodes.
 fn is_relationship_pattern(pattern: &Pattern<Subject>) -> bool {
     pattern.elements.len() == 2
         && pattern.elements[0].elements.is_empty()
         && pattern.elements[1].elements.is_empty()
-        && pattern.value.identity.0.is_empty()
 }
 
 /// Check if pattern is an annotation

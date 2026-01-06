@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gram Codec WASM - Browser Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .output {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .output.success {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        .output.error {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .example-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Gram Codec WASM</h1>
+            <p>Interactive Browser Demo</p>
+            <p id="version" style="font-size: 0.9em; margin-top: 10px;"></p>
+        </div>
+        
+        <div id="loading" class="loading">
+            <h2>Loading WASM module...</h2>
+            <p>Please wait while we initialize the gram codec.</p>
+        </div>
+        
+        <div id="app" class="content" style="display: none;">
+            <!-- Parse Section -->
+            <div class="section">
+                <h2>📥 Parse Gram Notation</h2>
+                <div class="input-group">
+                    <label for="parseInput">Gram Notation:</label>
+                    <textarea id="parseInput" rows="4" placeholder="(alice)-[:KNOWS]->(bob)">
+(alice)-[:KNOWS]->(bob)</textarea>
+                </div>
+                <button onclick="parseGram()">Parse</button>
+                <button onclick="validateGram()">Validate Only</button>
+                <div id="parseOutput" class="output"></div>
+            </div>
+
+            <!-- Examples Section -->
+            <div class="section">
+                <h2>📚 Quick Examples</h2>
+                <div class="examples">
+                    <button class="example-btn" onclick="loadExample('(hello)')">Simple Node</button>
+                    <button class="example-btn" onclick="loadExample('(alice:Person)')">Node with Label</button>
+                    <button class="example-btn" onclick="loadExample('(a {name: \"Alice\"})')">Node with Properties</button>
+                    <button class="example-btn" onclick="loadExample('(a)-->(b)')">Relationship</button>
+                    <button class="example-btn" onclick="loadExample('(a)-[:KNOWS]->(b)')">Labeled Relationship</button>
+                    <button class="example-btn" onclick="loadExample('[team | alice, bob]')">Subject Pattern</button>
+                </div>
+            </div>
+
+            <!-- Round-Trip Section -->
+            <div class="section">
+                <h2>🔄 Round-Trip Test</h2>
+                <div class="input-group">
+                    <label for="roundTripInput">Input Gram Notation:</label>
+                    <input type="text" id="roundTripInput" value="(alice)-->(bob)" placeholder="(alice)-->(bob)">
+                </div>
+                <button onclick="testRoundTrip()">Test Round-Trip</button>
+                <div id="roundTripOutput" class="output"></div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="section">
+                <h2>📊 Session Statistics</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="parseCount">0</div>
+                        <div class="stat-label">Parses</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="successCount">0</div>
+                        <div class="stat-label">Successful</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="errorCount">0</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { parse_gram, validate_gram, round_trip, version } from '../../crates/gram-codec/pkg/gram_codec.js';
+
+        let parseCount = 0;
+        let successCount = 0;
+        let errorCount = 0;
+
+        // Initialize WASM
+        async function initWasm() {
+            try {
+                await init();
+                document.getElementById('version').textContent = `Version: ${version()}`;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+            } catch (e) {
+                document.getElementById('loading').innerHTML = `
+                    <h2>❌ Failed to Load WASM</h2>
+                    <p>Error: ${e.message}</p>
+                    <p>Make sure to build the WASM module first:</p>
+                    <code>wasm-pack build --target web crates/gram-codec -- --features wasm</code>
+                `;
+            }
+        }
+
+        // Parse gram notation
+        window.parseGram = function() {
+            const input = document.getElementById('parseInput').value;
+            const output = document.getElementById('parseOutput');
+            
+            parseCount++;
+            updateStats();
+
+            try {
+                const result = parse_gram(input);
+                successCount++;
+                updateStats();
+                
+                output.className = 'output success';
+                output.textContent = `✓ Parse successful!\n\n` +
+                    `Pattern count: ${result.pattern_count}\n` +
+                    `Identifiers: [${result.identifiers.join(', ')}]`;
+            } catch (e) {
+                errorCount++;
+                updateStats();
+                
+                output.className = 'output error';
+                output.textContent = `✗ Parse failed!\n\n${e}`;
+            }
+        };
+
+        // Validate gram notation
+        window.validateGram = function() {
+            const input = document.getElementById('parseInput').value;
+            const output = document.getElementById('parseOutput');
+            
+            parseCount++;
+            updateStats();
+
+            const isValid = validate_gram(input);
+            
+            if (isValid) {
+                successCount++;
+                output.className = 'output success';
+                output.textContent = '✓ Valid gram notation!';
+            } else {
+                errorCount++;
+                output.className = 'output error';
+                output.textContent = '✗ Invalid gram notation';
+            }
+            
+            updateStats();
+        };
+
+        // Load example
+        window.loadExample = function(example) {
+            document.getElementById('parseInput').value = example;
+        };
+
+        // Test round-trip
+        window.testRoundTrip = function() {
+            const input = document.getElementById('roundTripInput').value;
+            const output = document.getElementById('roundTripOutput');
+            
+            parseCount++;
+            updateStats();
+
+            try {
+                const result = round_trip(input);
+                successCount++;
+                updateStats();
+                
+                output.className = 'output success';
+                output.textContent = `✓ Round-trip successful!\n\n` +
+                    `Original:   ${input}\n` +
+                    `Serialized: ${result}\n\n` +
+                    `Still valid: ${validate_gram(result) ? '✓' : '✗'}`;
+            } catch (e) {
+                errorCount++;
+                updateStats();
+                
+                output.className = 'output error';
+                output.textContent = `✗ Round-trip failed!\n\n${e}`;
+            }
+        };
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('parseCount').textContent = parseCount;
+            document.getElementById('successCount').textContent = successCount;
+            document.getElementById('errorCount').textContent = errorCount;
+        }
+
+        // Initialize on load
+        initWasm();
+    </script>
+</body>
+</html>
+
