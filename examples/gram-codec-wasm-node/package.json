@@ -1,0 +1,13 @@
+{
+  "name": "gram-codec-wasm-node-example",
+  "version": "0.1.0",
+  "description": "Node.js example for gram-codec WASM bindings",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["gram", "wasm", "codec"],
+  "author": "",
+  "license": "Apache-2.0"
+}
+

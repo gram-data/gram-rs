@@ -25,7 +25,7 @@ criterion.workspace = true
 
 [features]
 default = []
-wasm = ["wasm-bindgen"]
+wasm = ["wasm-bindgen", "console_error_panic_hook"]
 python = ["pyo3"]
 
 [lib]
@@ -36,11 +36,3 @@ path = "src/lib.rs"
 name = "codec_benchmarks"
 harness = false
 required-features = []
-
-[[example]]
-name = "basic_usage"
-path = "../../examples/gram-codec/basic_usage.rs"
-
-[[example]]
-name = "advanced_usage"
-path = "../../examples/gram-codec/advanced_usage.rs"
