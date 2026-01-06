@@ -39,7 +39,7 @@
 mod error;
 mod parser;
 mod serializer;
-mod transform;
+pub(crate) mod transform;
 mod value;
 
 // Optional platform-specific modules
