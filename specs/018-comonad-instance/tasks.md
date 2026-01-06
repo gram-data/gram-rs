@@ -24,11 +24,11 @@
 
 **Purpose**: Prepare project structure and dependencies for Comonad implementation
 
-- [ ] T001 Add proptest dependency to crates/pattern-core/Cargo.toml for property-based testing
-- [ ] T002 [P] Create module structure: crates/pattern-core/src/pattern/comonad.rs
-- [ ] T003 [P] Create module structure: crates/pattern-core/src/pattern/comonad_helpers.rs
-- [ ] T004 [P] Update crates/pattern-core/src/pattern/mod.rs to export comonad module
-- [ ] T005 [P] Update crates/pattern-core/src/lib.rs to re-export comonad operations publicly
+- [X] T001 Add proptest dependency to crates/pattern-core/Cargo.toml for property-based testing
+- [X] T002 [P] Create module structure: crates/pattern-core/src/pattern/comonad.rs
+- [X] T003 [P] Create module structure: crates/pattern-core/src/pattern/comonad_helpers.rs
+- [X] T004 [P] Update crates/pattern-core/src/pattern/mod.rs to export comonad module
+- [X] T005 [P] Update crates/pattern-core/src/lib.rs to re-export comonad operations publicly
 
 **Checkpoint**: Module structure ready for implementation
 
