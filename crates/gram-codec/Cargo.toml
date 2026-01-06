@@ -5,15 +5,34 @@ edition.workspace = true
 rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
-description = "Gram notation serialization/deserialization"
+description = "Bidirectional codec between Gram notation and Pattern data structures"
 
 [dependencies]
+pattern-core = { path = "../pattern-core" }
+tree-sitter = "0.25"
+tree-sitter-gram = "0.2"
+thiserror.workspace = true
+
+# WASM support
+wasm-bindgen = { version = "0.2", optional = true }
+
+# Python support
+pyo3 = { version = "0.23", optional = true, features = ["extension-module"] }
 
 [dev-dependencies]
-proptest = { workspace = true }
-insta = { workspace = true }
+insta.workspace = true
+criterion.workspace = true
+
+[features]
+default = []
+wasm = ["wasm-bindgen"]
+python = ["pyo3"]
 
 [lib]
 name = "gram_codec"
 path = "src/lib.rs"
 
+[[bench]]
+name = "codec_benchmarks"
+harness = false
+required-features = []

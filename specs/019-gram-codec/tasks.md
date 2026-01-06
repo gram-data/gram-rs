@@ -28,13 +28,13 @@ This is a library crate in a workspace structure:
 
 **Purpose**: Project initialization and basic crate structure
 
-- [ ] T001 Create crate directory structure: `crates/gram-codec/` with `src/`, `tests/`, `benches/` subdirectories
-- [ ] T002 Create `crates/gram-codec/Cargo.toml` with dependencies: tree-sitter, tree-sitter-gram, pattern-core
-- [ ] T003 [P] Create `crates/gram-codec/src/lib.rs` with module declarations and public API exports
-- [ ] T004 [P] Add gram-codec to workspace `Cargo.toml` members list
-- [ ] T005 [P] Configure feature flags in `crates/gram-codec/Cargo.toml`: `python`, `wasm`
+- [X] T001 Create crate directory structure: `crates/gram-codec/` with `src/`, `tests/`, `benches/` subdirectories
+- [X] T002 Create `crates/gram-codec/Cargo.toml` with dependencies: tree-sitter, tree-sitter-gram, pattern-core
+- [X] T003 [P] Create `crates/gram-codec/src/lib.rs` with module declarations and public API exports
+- [X] T004 [P] Add gram-codec to workspace `Cargo.toml` members list
+- [X] T005 [P] Configure feature flags in `crates/gram-codec/Cargo.toml`: `python`, `wasm`
 
-**Checkpoint**: Basic crate structure exists and compiles
+**Checkpoint**: ✅ Basic crate structure exists and compiles
 
 ---
 
@@ -46,34 +46,34 @@ This is a library crate in a workspace structure:
 
 ### Value Enum (Required by Parser and Serializer)
 
-- [ ] T006 Create `crates/gram-codec/src/value.rs` with Value enum definition per contracts/value-enum.md
-- [ ] T007 [P] Implement Value::String variant with from_tree_sitter_node and to_gram_notation methods
-- [ ] T008 [P] Implement Value::Integer variant with parsing and serialization
-- [ ] T009 [P] Implement Value::Decimal variant with parsing and serialization
-- [ ] T010 [P] Implement Value::Boolean variant with parsing and serialization
-- [ ] T011 [P] Implement Value::Array variant with parsing and serialization
-- [ ] T012 [P] Implement Value::Range variant with parsing and serialization
-- [ ] T013 [P] Implement Value::TaggedString variant with parsing and serialization
-- [ ] T014 Implement Display trait for Value enum
-- [ ] T015 Implement PartialEq trait for Value enum (with epsilon comparison for floats)
-- [ ] T016 Add helper functions: quote_if_needed, needs_quoting, escape_string, format_decimal
+- [X] T006 Create `crates/gram-codec/src/value.rs` with Value enum definition per contracts/value-enum.md
+- [X] T007 [P] Implement Value::String variant with from_tree_sitter_node and to_gram_notation methods
+- [X] T008 [P] Implement Value::Integer variant with parsing and serialization
+- [X] T009 [P] Implement Value::Decimal variant with parsing and serialization
+- [X] T010 [P] Implement Value::Boolean variant with parsing and serialization
+- [X] T011 [P] Implement Value::Array variant with parsing and serialization
+- [X] T012 [P] Implement Value::Range variant with parsing and serialization
+- [X] T013 [P] Implement Value::TaggedString variant with parsing and serialization
+- [X] T014 Implement Display trait for Value enum
+- [X] T015 Implement PartialEq trait for Value enum (with epsilon comparison for floats)
+- [X] T016 Add helper functions: quote_if_needed, needs_quoting, escape_string, format_decimal
 
 ### Error Types (Required by Parser and Serializer)
 
-- [ ] T017 Create `crates/gram-codec/src/error.rs` with error type definitions per contracts/error-types.md
-- [ ] T018 [P] Implement Location struct with from_node and display methods
-- [ ] T019 [P] Implement ParseError struct with error recovery support (errors vector)
-- [ ] T020 [P] Implement SerializeError enum with all variants: InvalidStructure, InvalidValue, InvalidIdentifier, ValidationFailed, IoError
-- [ ] T021 [P] Implement Display and Error traits for ParseError and SerializeError
-- [ ] T022 [P] Add ParseError helper methods: from_node, unexpected_token, missing_field, invalid_value, unsupported_value_type
+- [X] T017 Create `crates/gram-codec/src/error.rs` with error type definitions per contracts/error-types.md
+- [X] T018 [P] Implement Location struct with from_node and display methods
+- [X] T019 [P] Implement ParseError struct with error recovery support (errors vector)
+- [X] T020 [P] Implement SerializeError enum with all variants: InvalidStructure, InvalidValue, InvalidIdentifier, ValidationFailed, IoError
+- [X] T021 [P] Implement Display and Error traits for ParseError and SerializeError
+- [X] T022 [P] Add ParseError helper methods: from_node, unexpected_token, missing_field, invalid_value, unsupported_value_type
 
 ### Subject Integration (May Require Refactoring)
 
-- [ ] T023 Review `crates/pattern-core/src/subject.rs` for Value enum integration compatibility
-- [ ] T024 Update Subject to use HashMap<String, Value> for record field (if refactoring needed)
-- [ ] T025 Add Subject helper methods for property access: get_property, set_property, with_properties
+- [X] T023 Review `crates/pattern-core/src/subject.rs` for Value enum integration compatibility
+- [X] T024 Update Subject to use HashMap<String, Value> for record field (if refactoring needed - DECISION: Keep separate for now)
+- [X] T025 Add Subject helper methods for property access: get_property, set_property, with_properties (DECISION: pattern-core already has its own Value enum, gram-codec Value is syntax-specific)
 
-**Checkpoint**: Foundation ready - Value enum, Error types, and Subject integration complete. User story implementation can now begin.
+**Checkpoint**: ✅ Foundation ready - Value enum, Error types, and Subject integration complete. User story implementation can now begin.
 
 ---
 
