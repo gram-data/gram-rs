@@ -3063,3 +3063,10 @@ impl<V: Hash> Hash for Pattern<V> {
         self.elements.hash(state);
     }
 }
+
+// ============================================================================
+// Comonad Operations
+// ============================================================================
+
+pub mod comonad;
+pub mod comonad_helpers;

@@ -177,6 +177,10 @@ pub mod test_utils;
 pub use pattern::{Pattern, StructureAnalysis, ValidationError, ValidationRules};
 pub use subject::{PropertyRecord, RangeValue, Subject, Symbol, Value};
 
+// Re-export comonad operations for convenient access
+// These are defined in pattern::comonad and pattern::comonad_helpers modules
+// All operations are methods on Pattern<V>, so no additional re-exports needed beyond Pattern itself
+
 // ============================================================================
 // Combinable Trait
 // ============================================================================

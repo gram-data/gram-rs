@@ -120,7 +120,7 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 
 ## Phase 3: Pattern Typeclass Instances (Traits)
 
-**Progress**: 9/11 features complete
+**Progress**: 9/11 features complete (1 deferred, 1 recommended)
 - ✅ 008: Functor instance (idiomatic `map` method)
 - ✅ 009: Foldable instance (fold operations)
 - ✅ 010: Traversable instance (effectful transformations)
@@ -130,7 +130,8 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 - ✅ 014: Monoid instance (Default trait, identity element)
 - ✅ 015: Hash instance (hashing for HashMap/HashSet)
 - ✅ 016: Predicate matching (find_first, matches, contains)
-- ⏸️ 017-018: Remaining typeclass instances (pending)
+- ⏸️ 017: Applicative instance (deferred - no practical use cases)
+- 🎯 018: Comonad instance (recommended - conceptually correct for Pattern semantics)
 
 ### ✅ 008-functor-instance: Functor Trait
 **Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
@@ -313,33 +314,124 @@ This TODO tracks the incremental porting of features from the gram-hs reference 
 **Benchmarks**: `crates/pattern-core/benches/predicate_benchmarks.rs` (13 benchmark groups for find_first, matches, contains)
 **Status**: Complete - predicate-based pattern matching implemented with comprehensive test coverage, property-based verification of mathematical properties (reflexivity, symmetry, transitivity), and behavioral equivalence with gram-hs confirmed. All operations meet performance targets (<10ms for typical patterns).
 
-### 017-applicative-instance: Applicative Trait
-**Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
-**Documentation Reference**: `../gram-hs/docs/` - Up-to-date documentation about the implementation
-**Historical Reference (Context Only)**: `../gram-hs/specs/013-applicative-instance/` - Historical notes from incremental development (may be outdated)
+### ⏸️ 017-applicative-instance: Applicative Trait (DEFERRED - Not Recommended)
+**Primary Reference (Authoritative)**: `../gram-hs/libs/pattern/src/Pattern/Core.hs` - Lines 670-676
+**Tests**: `../gram-hs/libs/pattern/tests/Spec/Pattern/Properties.hs` - Lines 1075-1189 (law verification only)
+**Analysis**: `specs/017-applicative-instance/ANALYSIS.md` - Detailed evaluation and recommendation
+**Recommendation**: `specs/017-applicative-instance/RECOMMENDATION.md` - Port recommendation summary
 
-- [ ] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
-- [ ] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
-- [ ] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
-- [ ] Review gram-hs spec: `../gram-hs/specs/013-applicative-instance/spec.md` (historical notes, for context only)
-- [ ] Design Rust trait equivalent to Applicative (based on actual Haskell implementation)
-- [ ] Implement applicative operations for patterns (from actual Haskell source)
-- [ ] Port test cases (from actual test files)
-- [ ] Verify equivalence (against actual Haskell implementation)
+**Status**: DEFERRED - Analysis completed 2026-01-05. Not recommended for port at this time.
 
-### 018-comonad-instance: Comonad Trait
-**Primary Reference (Authoritative)**: `../gram-hs/libs/` - Haskell implementation source code
-**Documentation Reference**: `../gram-hs/docs/` - Up-to-date documentation about the implementation
-**Historical Reference (Context Only)**: `../gram-hs/specs/014-comonad-instance/` - Historical notes from incremental development (may be outdated)
+**Rationale**: 
+- ❌ Zero practical usage in gram-hs (only law verification tests, no production use)
+- ❌ All use cases better served by existing features:
+  - `Pattern::point` for `pure` (already exists)
+  - `Pattern::map` for function application (Functor, already implemented)
+  - `Pattern::traverse_result` for validation workflows (Traversable, already implemented)
+  - `Pattern::fold` for aggregations (Foldable, already implemented)
+  - `Pattern::combine` for merging patterns (Semigroup, already implemented)
+- ❌ Complex Cartesian product semantics (creates exponential element growth)
+  - Spec claims "zip-like" behavior, but implementation does Cartesian product
+  - Pattern `f [f1, f2]` applied to `x [x1, x2]` creates 4 elements, not 2
+- ❌ Awkward in Rust (requires storing functions in patterns, extensive cloning)
+- ❌ High testing burden (5 applicative laws + edge cases) for no clear benefit
 
-- [ ] Study Haskell implementation: `../gram-hs/libs/` - **This is the source of truth**
-- [ ] Review gram-hs documentation: `../gram-hs/docs/` - **Up-to-date information about the implementation**
-- [ ] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Shows expected behavior**
-- [ ] Review gram-hs spec: `../gram-hs/specs/014-comonad-instance/spec.md` (historical notes, for context only)
-- [ ] Design Rust trait equivalent to Comonad (based on actual Haskell implementation)
-- [ ] Implement comonad operations for patterns (from actual Haskell source)
-- [ ] Port test cases (from actual test files)
-- [ ] Verify equivalence (against actual Haskell implementation)
+**Alternative Approaches for Users**:
+Users can achieve applicative-like operations using existing methods:
+- `Pattern::point(value)` provides `pure` functionality
+- `pattern.map(f)` provides single function application
+- `pattern.traverse_result(f)` provides validation workflows with short-circuiting
+- `pattern.fold(init, combine)` provides aggregation
+- Custom `zip_with` or similar methods can be added later if concrete use cases emerge
+
+**Reconsider if**: Concrete use cases emerge that cannot be solved with existing methods.
+
+- [x] Study Haskell implementation: `../gram-hs/libs/` - **Analysis complete**
+- [x] Review gram-hs documentation: `../gram-hs/docs/` - **Analysis complete**
+- [x] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Only law tests, no practical usage**
+- [x] Review gram-hs spec: `../gram-hs/specs/013-applicative-instance/spec.md` - **Spec semantics don't match implementation**
+- [ ] ~~Design Rust trait equivalent to Applicative~~ - **DEFERRED - Not recommended**
+- [ ] ~~Implement applicative operations for patterns~~ - **DEFERRED - No compelling use case**
+- [ ] ~~Port test cases~~ - **DEFERRED**
+- [ ] ~~Verify equivalence~~ - **DEFERRED**
+
+### 🎯 018-comonad-instance: Comonad Operations (RECOMMENDED - Conceptually Correct)
+**Primary Reference (Authoritative)**: `../gram-hs/libs/pattern/src/Pattern/Core.hs` - Lines 720-728, 1104-1138
+**Tests**: `../gram-hs/libs/pattern/tests/Spec/Pattern/CoreSpec.hs` - Lines 4242-4400 (helper tests)
+**Property Tests**: `../gram-hs/libs/pattern/tests/Spec/Pattern/Properties.hs` - Lines 1287-1332 (law tests)
+**Analysis**: `specs/018-comonad-instance/ANALYSIS.md` - Detailed evaluation and recommendation
+**Recommendation**: `specs/018-comonad-instance/RECOMMENDATION.md` - Port recommendation summary (updated)
+
+**Status**: ✅ COMPLETE - Implementation finished 2026-01-05. Comonad operations are available for Pattern.
+
+**Conceptual Rationale**:
+- ✅ **Pattern semantics**: Elements ARE the pattern, value DECORATES the elements
+  - Example: `Pattern { value: "sonata", elements: ["A", "B", "A"] }`
+  - The elements `["A", "B", "A"]` form the actual pattern
+  - The value `"sonata"` provides information ABOUT that pattern
+- ✅ **Comonad is the only typeclass that treats both as information**:
+  - `extract`: Access the decorative information (the value)
+  - `extend`: Compute new decorative information based on context (the subpattern)
+- ✅ **Natural fit for "decorated sequences"**: Value + Elements are peers, not hierarchy
+- ✅ **Enables position-aware decorations**: depthAt, sizeAt, indicesAt compute new decorations
+
+**Implementation Approach**:
+1. **Implement `extract` and `extend`** (skip `duplicate` for now)
+2. **Use `extend` for helpers** to maintain conceptual consistency:
+   - `depth_at()` = `extend(|p| p.depth())`
+   - `size_at()` = `extend(|p| p.size())`
+   - `indices_at()` = custom implementation (needs path tracking)
+3. **Keep it simple**: Pass function by reference (no Clone bound needed)
+4. **Document semantics**: Explain Pattern's "decorated sequence" model
+
+**Practical Considerations**:
+- ⚠️ Limited production usage in gram-hs (only test helpers)
+- ✅ But conceptually correct for Pattern's semantics
+- ✅ Enables natural expression of position-aware operations
+- ✅ Not complex to implement (extract trivial, extend straightforward)
+
+**Implementation Plan**:
+```rust
+impl<V> Pattern<V> {
+    /// Extracts the decorative value (the information about the pattern).
+    pub fn extract(&self) -> &V {
+        &self.value
+    }
+    
+    /// Computes new decorative information at each position.
+    /// Takes a function that computes information about a subpattern.
+    pub fn extend<W, F>(&self, f: &F) -> Pattern<W>
+    where
+        F: Fn(&Pattern<V>) -> W,
+    {
+        Pattern {
+            value: f(self),
+            elements: self.elements.iter().map(|e| e.extend(f)).collect(),
+        }
+    }
+    
+    /// Decorates each position with its depth.
+    pub fn depth_at(&self) -> Pattern<usize> {
+        self.extend(&|p| p.depth())
+    }
+    
+    /// Decorates each position with its subtree size.
+    pub fn size_at(&self) -> Pattern<usize> {
+        self.extend(&|p| p.size())
+    }
+}
+```
+
+- [x] Study Haskell implementation: `../gram-hs/libs/` - **Analysis complete**
+- [x] Review gram-hs documentation: `../gram-hs/docs/` - **Analysis complete**
+- [x] Review gram-hs tests: `../gram-hs/libs/*/tests/` - **Helper tests + law tests**
+- [x] Review gram-hs spec: `../gram-hs/specs/014-comonad-instance/spec.md` - **Reviewed**
+- [x] Implement `extract` and `extend` methods - **Complete**
+- [x] Implement `depth_at`, `size_at`, `indices_at` helpers using `extend` - **Complete**
+- [x] Port test cases (comonad laws + helper tests) - **Complete**
+- [x] Verify equivalence (against actual Haskell implementation) - **Complete**
+- [x] Document Pattern's "decorated sequence" semantics - **Complete**
+- [x] Add examples showing position-aware decorations - **Complete**
 
 ---
 
