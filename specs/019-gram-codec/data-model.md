@@ -120,12 +120,16 @@ Is equivalent to:
 1. **Node Pattern** `(subject)` → `Pattern { value: Subject, elements: [] }`
 2. **Relationship Pattern** `(left)-[edge]->(right)` → `Pattern { value: Subject(edge), elements: [left_pattern, right_pattern] }`
 3. **Subject Pattern** `[subject | e1, e2, ...]` → `Pattern { value: Subject, elements: [e1_pattern, e2_pattern, ...] }`
-4. **Annotated Pattern** `@key(value) element` → `Pattern { value: Subject(annotation), elements: [element_pattern] }`
+4. **Annotated Pattern** `@key(value) element` → `Pattern { value: Subject(anonymous, properties={key: value}), elements: [element_pattern] }`
+   - Annotations form key/value pairs that become properties of an anonymous, unlabeled Subject
+   - Multiple annotations: `@k1(v1) @k2(v2) element` → `properties={k1: v1, k2: v2}`
 
 ### Serialization (Pattern → Gram Notation)
 
 1. **0 elements** → Node notation: `(subject)`
-2. **1 element** → Annotation notation: `@key(value) element` or Subject pattern: `[subject | element]`
+2. **1 element** → Annotation notation: `@key(value) element` (if Subject is anonymous with properties) or Subject pattern: `[subject | element]`
+   - Anonymous Subject with properties: Serialize as annotation(s)
+   - Named or labeled Subject: Serialize as subject pattern
 3. **2 elements** → Relationship notation: `(left)-->(right)` or Subject pattern: `[subject | left, right]`
 4. **N elements (N > 2)** → Subject pattern notation: `[subject | e1, e2, ..., eN]`
 

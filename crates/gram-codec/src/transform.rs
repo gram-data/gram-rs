@@ -184,10 +184,10 @@ fn transform_annotated_pattern(
         }
     };
 
-    // Extract the pattern being annotated
+    // Extract the pattern being annotated (field name is "elements")
     let pattern_node = node
-        .child_by_field_name("pattern")
-        .ok_or_else(|| ParseError::missing_field(node, "pattern"))?;
+        .child_by_field_name("elements")
+        .ok_or_else(|| ParseError::missing_field(node, "elements"))?;
 
     let element = transform_pattern_node(&pattern_node, input)?;
 
@@ -380,30 +380,66 @@ fn extract_edge_subject(node: &tree_sitter::Node, input: &str) -> Result<Subject
     })
 }
 
-/// Extract annotation subject from annotation node
+/// Extract annotation subject from annotations node
+///
+/// # Annotation Representation
+///
+/// Annotations are key/value pairs that form a property record for an anonymous,
+/// unlabeled pattern with a single element (the annotated target).
+///
+/// For example: `@type(node) @depth(2) (a)` becomes:
+/// ```text
+/// Pattern {
+///   value: Subject {
+///     identity: Symbol(""),  // Anonymous
+///     labels: {},            // Unlabeled
+///     properties: {
+///       "type": String("node"),
+///       "depth": Integer(2)
+///     }
+///   },
+///   elements: [Pattern(a)]
+/// }
+/// ```
+///
+/// This representation:
+/// - Naturally supports multiple annotations
+/// - Makes annotations semantically consistent as metadata properties
+/// - Enables round-trip correctness (serializer can detect anonymous + properties = annotations)
 fn extract_annotation_subject(
     node: &tree_sitter::Node,
     input: &str,
 ) -> Result<Subject, ParseError> {
-    // Annotations are like @key(value)
-    // For now, treat as identifier with the key
-    let mut cursor = node.walk();
-    let mut identity = String::new();
+    // Parse tree structure: (annotations (annotation key: (symbol) value: (type))*)
 
+    let mut properties = HashMap::new();
+    let mut cursor = node.walk();
+
+    // Iterate all annotation children and collect them as properties
     for child in node.children(&mut cursor) {
-        if child.kind() == "symbol" || child.kind() == "identifier" {
-            identity = child
+        if child.kind() == "annotation" {
+            // Extract key field
+            let key_node = child.child_by_field_name("key").ok_or_else(|| {
+                ParseError::from_node(&child, "Annotation missing key field".to_string())
+            })?;
+
+            let key = key_node
                 .utf8_text(input.as_bytes())
-                .map_err(|e| ParseError::from_node(&child, format!("UTF-8 error: {}", e)))?
+                .map_err(|e| ParseError::from_node(&key_node, format!("UTF-8 error: {}", e)))?
                 .to_string();
-            break;
+
+            // Extract value field if present
+            if let Some(value_node) = child.child_by_field_name("value") {
+                let value = transform_value_to_pattern_value(&value_node, input)?;
+                properties.insert(key, value);
+            }
         }
     }
 
     Ok(Subject {
-        identity: Symbol(identity),
-        labels: HashSet::new(),
-        properties: HashMap::new(),
+        identity: Symbol(String::new()), // Anonymous
+        labels: HashSet::new(),          // Unlabeled
+        properties,                      // Annotations as properties
     })
 }
 

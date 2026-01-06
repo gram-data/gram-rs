@@ -107,7 +107,8 @@ impl Value {
     /// Serialize value to gram notation
     pub fn to_gram_notation(&self) -> String {
         match self {
-            Value::String(s) => quote_if_needed(s),
+            // Strings are always quoted in gram notation property values
+            Value::String(s) => format!("\"{}\"", escape_string(s)),
             Value::Integer(i) => i.to_string(),
             Value::Decimal(f) => format_decimal(*f),
             Value::Boolean(b) => b.to_string(),
@@ -196,28 +197,6 @@ impl PartialEq for Value {
 }
 
 // Helper Functions
-
-/// Quote string if it contains special characters or whitespace
-pub(crate) fn quote_if_needed(s: &str) -> String {
-    if needs_quoting(s) {
-        format!("\"{}\"", escape_string(s))
-    } else {
-        s.to_string()
-    }
-}
-
-/// Check if string needs quoting based on gram notation rules
-pub(crate) fn needs_quoting(s: &str) -> bool {
-    s.is_empty()
-        || s.contains(char::is_whitespace)
-        || s.chars().any(|c| {
-            matches!(
-                c,
-                '(' | ')' | '[' | ']' | '{' | '}' | ':' | ',' | '@' | '#' | '-' | '~' | '"'
-            )
-        })
-        || s.chars().next().is_some_and(|c| c.is_ascii_digit())
-}
 
 /// Escape special characters in strings
 pub(crate) fn escape_string(s: &str) -> String {
@@ -315,9 +294,10 @@ mod tests {
 
     #[test]
     fn test_string_value_serialization() {
+        // Strings are always quoted in gram notation property values
         assert_eq!(
             Value::String("hello".to_string()).to_gram_notation(),
-            "hello"
+            "\"hello\""
         );
         assert_eq!(
             Value::String("Hello World".to_string()).to_gram_notation(),
@@ -361,7 +341,8 @@ mod tests {
             Value::Integer(42),
             Value::Boolean(true),
         ]);
-        assert_eq!(v.to_gram_notation(), "[rust, 42, true]");
+        // Strings are always quoted
+        assert_eq!(v.to_gram_notation(), "[\"rust\", 42, true]");
 
         // Empty array
         assert_eq!(Value::Array(vec![]).to_gram_notation(), "[]");
@@ -429,17 +410,6 @@ mod tests {
             Value::Array(vec![Value::Integer(1), Value::Integer(2)]),
             Value::Array(vec![Value::Integer(1), Value::Integer(2)])
         );
-    }
-
-    #[test]
-    fn test_needs_quoting() {
-        assert!(!needs_quoting("hello"));
-        assert!(needs_quoting("Hello World")); // whitespace
-        assert!(needs_quoting("")); // empty
-        assert!(needs_quoting("42")); // starts with digit
-        assert!(needs_quoting("a:b")); // special char :
-        assert!(needs_quoting("a-b")); // special char -
-        assert!(needs_quoting("a(b)")); // special char ()
     }
 
     #[test]

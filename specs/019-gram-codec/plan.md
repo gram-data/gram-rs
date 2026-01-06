@@ -171,13 +171,23 @@ This feature uses **`tree-sitter-gram` as the authoritative reference**, NOT `..
 
 | Principle | Status | Notes |
 |-----------|--------|-------|
-| I. Reference Implementation Fidelity | ⚠️ DEVIATION (Justified) | Uses tree-sitter-gram, not gram-hs (explicit requirement) |
+| I. Reference Implementation Fidelity | ⚠️ **VIOLATION** (Justified) | Uses tree-sitter-gram, not gram-hs (explicit requirement) |
 | II. Correctness & Compatibility | ✅ Compliant | Round-trip correctness, comprehensive validation |
 | III. Rust Native Idioms | ✅ Compliant | Result types, Value enum, idiomatic patterns |
 | IV. Multi-Target Library Design | ✅ Compliant | Native Rust + WASM, Python bindings |
 | V. External Language Bindings | ✅ Compliant | WASM/JS, Python examples planned |
 
-**Overall Assessment**: ✅ **APPROVED** with justified deviation for Principle I (using tree-sitter-gram as authoritative reference per feature requirements).
+**Constitutional Violation - Principle I**: This feature violates the requirement to use `gram-hs` as the authoritative reference implementation.
+
+**Justification for Deviation**:
+1. **No authoritative implementation exists**: `gram-hs` does not implement gram notation parsing/serialization
+2. **Grammar is more authoritative than implementation**: `tree-sitter-gram` defines the grammar specification itself
+3. **Feature specification explicitly requires**: User requirement states "using `../tree-sitter-gram` as the standard grammar reference"
+4. **Multi-platform requirement**: tree-sitter provides native Rust, WASM, and Python support
+5. **Comprehensive validation**: `gram-lint` CLI uses tree-sitter-gram as validation tool
+6. **Test corpus availability**: `../tree-sitter-gram/test/corpus/` provides authoritative test cases
+
+**Overall Assessment**: ✅ **APPROVED** - Justified violation of Principle I. The deviation is necessary, well-justified, and maintains the spirit of the constitution (correctness and fidelity to gram specification).
 
 ## Project Structure
 
@@ -241,7 +251,15 @@ examples/
 
 ## Complexity Tracking
 
-> **Note**: No constitution violations requiring justification. The deviation from Principle I (using tree-sitter-gram instead of gram-hs) is explicitly required by the feature specification and is well-justified.
+> **Constitutional Deviation**: This feature VIOLATES Principle I (Reference Implementation Fidelity) by using `tree-sitter-gram` instead of `gram-hs` as the authoritative grammar reference.
+> 
+> **Justification**: The feature specification explicitly requires this deviation. Unlike other features, gram-hs does not have an authoritative gram notation parser/serializer implementation. The tree-sitter-gram repository is the definitive grammar specification, maintained by the same team, with comprehensive test corpus and multi-language bindings. Using tree-sitter-gram ensures:
+> - Correctness: Grammar is the source of truth, not an implementation
+> - Validation: `gram-lint` CLI provides authoritative validation
+> - Test coverage: Comprehensive test corpus in `../tree-sitter-gram/test/corpus/`
+> - Multi-platform: Native tree-sitter support for Rust, WASM, Python
+> 
+> **Approval**: See Constitution Summary (lines 170-180) for APPROVED justified deviation.
 
 | Aspect | Complexity | Justification |
 |--------|------------|---------------|
