@@ -17,6 +17,7 @@ Auto-generated from all feature plans. Last updated: 2025-12-27
 - N/A (pure functional data structure) (016-predicate-matching)
 - Rust 1.75+ (stable features only) (018-comonad-instance)
 - N/A (pure in-memory data structure operations) (018-comonad-instance)
+- N/A (in-memory transformations) (019-gram-codec)
 
 - Rust (MSRV: 1.70.0, edition: 2021) (002-workspace-setup)
 
@@ -36,9 +37,9 @@ cargo test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECH
 Rust (MSRV: 1.70.0, edition: 2021): Follow standard conventions
 
 ## Recent Changes
+- 019-gram-codec: Added Rust 1.75+ (edition 2021)
 - 018-comonad-instance: Added Rust 1.75+ (stable features only)
 - 016-predicate-matching: Added Rust 1.75+ (edition 2021) + None (std library only for core functionality)
-- 013-semigroup-instance: Added Rust 1.70.0+ (workspace MSRV), Edition 2021 + None (core library functionality)
 
 
 <!-- MANUAL ADDITIONS START -->
