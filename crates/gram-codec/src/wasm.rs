@@ -26,6 +26,7 @@
 //! ```
 
 use wasm_bindgen::prelude::*;
+use crate::ast::AstPattern;
 
 /// Result of parsing gram notation
 #[wasm_bindgen]
@@ -119,6 +120,44 @@ pub fn round_trip(input: &str) -> Result<String, JsValue> {
     // Serialize all patterns
     crate::serialize_patterns(&patterns)
         .map_err(|e| JsValue::from_str(&format!("Serialize error: {}", e)))
+}
+
+/// Parse gram notation to AST (JavaScript-friendly)
+///
+/// Returns a single pattern as a JavaScript object.
+/// This is the recommended way to parse gram in JavaScript/TypeScript.
+///
+/// The returned object has structure:
+/// ```javascript
+/// {
+///   subject: {
+///     identity: string,
+///     labels: string[],
+///     properties: object
+///   },
+///   elements: AstPattern[]
+/// }
+/// ```
+///
+/// # Example
+///
+/// ```javascript
+/// import init, { parse_to_ast } from './gram_codec.js';
+/// await init();
+///
+/// const ast = parse_to_ast("(alice:Person {name: 'Alice'})");
+/// console.log(ast.subject.identity);  // "alice"
+/// console.log(ast.subject.labels);    // ["Person"]
+/// console.log(ast.subject.properties.name);  // "Alice"
+/// ```
+#[wasm_bindgen]
+pub fn parse_to_ast(input: &str) -> Result<JsValue, JsValue> {
+    let ast = crate::parse_to_ast(input)
+        .map_err(|e| JsValue::from_str(&format!("Parse error: {}", e)))?;
+    
+    // Serialize to JsValue using serde-wasm-bindgen
+    serde_wasm_bindgen::to_value(&ast)
+        .map_err(|e| JsValue::from_str(&format!("Serialization error: {}", e)))
 }
 
 /// Get version information for the gram codec

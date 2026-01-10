@@ -8,7 +8,7 @@
  *   3. Run: node examples/wasm-node/index.js
  */
 
-const { parse_gram, validate_gram, round_trip, version } = require('gram-codec');
+const { parse_gram, parse_to_ast, validate_gram, round_trip, version } = require('gram-codec');
 
 console.log('=== Gram Codec WASM Examples (Node.js) ===\n');
 
@@ -119,6 +119,122 @@ Object.entries(gramFiles).forEach(([filename, content]) => {
 });
 
 console.log(`   Summary: ${validCount} valid, ${invalidCount} invalid`);
+
+// =============================================================================
+// AST Output Examples
+// =============================================================================
+
+console.log('\n=== AST Output Examples ===');
+console.log('\nThe parse_to_ast() function returns a JavaScript object representing');
+console.log('the Abstract Syntax Tree (AST) of the parsed gram notation.');
+console.log('This is the recommended way to access pattern data from JavaScript.\n');
+
+// Example 1: Simple node with properties
+console.log('Example 1: Simple node with properties');
+console.log('-'.repeat(50));
+let gramInput = '(alice:Person {name: "Alice", age: 30})';
+console.log(`Input: ${gramInput}\n`);
+
+let ast = parse_to_ast(gramInput);
+console.log(`Identity:   ${ast.subject.identity}`);
+console.log(`Labels:     ${JSON.stringify(ast.subject.labels)}`);
+console.log(`Properties: ${JSON.stringify(ast.subject.properties, null, 2)}`);
+console.log(`Elements:   ${ast.elements.length} children`);
+
+// Example 2: Pattern with elements
+console.log('\n\nExample 2: Pattern with elements');
+console.log('-'.repeat(50));
+gramInput = '[team:Team | (alice:Person), (bob:Person)]';
+console.log(`Input: ${gramInput}\n`);
+
+ast = parse_to_ast(gramInput);
+console.log(`Parent identity: ${ast.subject.identity}`);
+console.log(`Parent labels:   ${JSON.stringify(ast.subject.labels)}`);
+console.log(`Number of elements: ${ast.elements.length}`);
+
+ast.elements.forEach((elem, i) => {
+    console.log(`\n  Element ${i+1}:`);
+    console.log(`    Identity: ${elem.subject.identity}`);
+    console.log(`    Labels:   ${JSON.stringify(elem.subject.labels)}`);
+});
+
+// Example 3: Complex properties with different value types
+console.log('\n\nExample 3: Value type serialization');
+console.log('-'.repeat(50));
+gramInput = '(data {name: "Test", count: 42, active: true, tags: ["a", "b"]})';
+console.log(`Input: ${gramInput}\n`);
+
+ast = parse_to_ast(gramInput);
+console.log('Property types:');
+Object.entries(ast.subject.properties).forEach(([key, value]) => {
+    if (typeof value === 'object' && value !== null && 'type' in value) {
+        // Tagged value (e.g., Integer)
+        console.log(`  ${key}: ${value.type} = ${value.value}`);
+    } else {
+        // Native JavaScript value (e.g., string, boolean)
+        const typeName = Array.isArray(value) ? 'Array' : typeof value;
+        console.log(`  ${key}: ${typeName} = ${JSON.stringify(value)}`);
+    }
+});
+
+// Example 4: Navigating nested structures
+console.log('\n\nExample 4: Navigating AST structure');
+console.log('-'.repeat(50));
+gramInput = '[org:Org {name: "ACME"} | [team:Team | (alice), (bob)]]';
+console.log(`Input: ${gramInput}\n`);
+
+ast = parse_to_ast(gramInput);
+
+function printPattern(pattern, depth = 0) {
+    const indent = '  '.repeat(depth);
+    const identity = pattern.subject.identity || '(anonymous)';
+    const labels = pattern.subject.labels.join(', ') || '(no labels)';
+    const propsCount = Object.keys(pattern.subject.properties).length;
+    
+    console.log(`${indent}└─ ${identity} [${labels}] (${propsCount} properties)`);
+    
+    if (pattern.elements && pattern.elements.length > 0) {
+        pattern.elements.forEach(elem => printPattern(elem, depth + 1));
+    }
+}
+
+console.log('Pattern structure:');
+printPattern(ast);
+
+// Example 5: JSON serialization for storage/transmission
+console.log('\n\nExample 5: JSON serialization');
+console.log('-'.repeat(50));
+gramInput = '(alice:Person {name: "Alice"})';
+console.log(`Input: ${gramInput}\n`);
+
+ast = parse_to_ast(gramInput);
+
+// Serialize to compact JSON
+const compactJson = JSON.stringify(ast);
+console.log(`Compact JSON (${compactJson.length} bytes):`);
+console.log(compactJson);
+
+// Serialize to pretty JSON
+const prettyJson = JSON.stringify(ast, null, 2);
+console.log(`\nPretty JSON (${prettyJson.length} bytes):`);
+console.log(prettyJson);
+
+// Example 6: Working with TypeScript (type information)
+console.log('\n\nExample 6: TypeScript usage hints');
+console.log('-'.repeat(50));
+console.log('For TypeScript projects, you can define interfaces:');
+console.log(`
+interface AstPattern {
+  subject: {
+    identity: string;
+    labels: string[];
+    properties: Record<string, any>;
+  };
+  elements: AstPattern[];
+}
+
+const ast: AstPattern = parse_to_ast("(hello)");
+`);
 
 console.log('\n=== Examples Complete ===');
 

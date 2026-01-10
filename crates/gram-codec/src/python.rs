@@ -25,6 +25,7 @@
 use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
 use std::collections::HashMap;
+use crate::ast::AstPattern;
 
 /// Result of parsing gram notation
 #[pyclass]
@@ -188,6 +189,51 @@ fn serialize_patterns(_patterns: Bound<'_, PyAny>) -> PyResult<String> {
     ))
 }
 
+/// Parse gram notation to AST (Python dict)
+///
+/// Returns a single pattern as a Python dictionary.
+/// This is the recommended way to parse gram in Python.
+///
+/// Args:
+///     input (str): Gram notation text
+///
+/// Returns:
+///     dict: Dictionary with structure:
+///         {
+///           'subject': {
+///             'identity': str,
+///             'labels': list[str],
+///             'properties': dict
+///           },
+///           'elements': list[dict]
+///         }
+///
+/// Raises:
+///     ValueError: If parsing fails
+///
+/// Example:
+///     >>> import gram_codec
+///     >>> ast = gram_codec.parse_to_ast("(alice:Person {name: 'Alice'})")
+///     >>> print(ast['subject']['identity'])
+///     alice
+///     >>> print(ast['subject']['labels'])
+///     ['Person']
+#[pyfunction]
+fn parse_to_ast(py: Python, input: &str) -> PyResult<PyObject> {
+    let ast = crate::parse_to_ast(input)
+        .map_err(|e| PyValueError::new_err(format!("Parse error: {}", e)))?;
+    
+    // Convert AST to Python dict manually
+    // Serialize to JSON first, then parse as Python
+    let json_str = serde_json::to_string(&ast)
+        .map_err(|e| PyValueError::new_err(format!("Serialization error: {}", e)))?;
+    
+    // Use Python's json module to parse the JSON string
+    let json_module = py.import("json")?;
+    let loads = json_module.getattr("loads")?;
+    loads.call1((json_str,)).map(|obj| obj.into())
+}
+
 /// Get the version of gram-codec
 ///
 /// Returns:
@@ -206,6 +252,7 @@ fn version() -> &'static str {
 #[pymodule]
 fn gram_codec(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_gram, m)?)?;
+    m.add_function(wrap_pyfunction!(parse_to_ast, m)?)?;
     m.add_function(wrap_pyfunction!(validate_gram, m)?)?;
     m.add_function(wrap_pyfunction!(round_trip, m)?)?;
     m.add_function(wrap_pyfunction!(serialize_patterns, m)?)?;

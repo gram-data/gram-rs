@@ -37,6 +37,7 @@
 //! combinators, validated for 100% conformance with the tree-sitter-gram test corpus.
 
 // Module declarations
+pub mod ast;
 mod error;
 mod serializer;
 mod value;
@@ -56,7 +57,8 @@ mod wasm;
 #[cfg(feature = "python")]
 mod python;
 
-// Public API exports  
+// Public API exports
+pub use ast::{AstPattern, AstSubject};
 pub use error::{Location, SerializeError};
 // Use the new nom-based ParseError from the parser module
 pub use parser::ParseError;
@@ -104,6 +106,54 @@ pub fn parse_gram(input: &str) -> Result<Vec<Pattern<Subject>>, ParseError> {
             Ok(patterns)
         }
         Err(e) => Err(parser::ParseError::from_nom_error(input, e)),
+    }
+}
+
+/// Parse gram notation to AST (Abstract Syntax Tree)
+///
+/// Returns a single AstPattern representing the file-level pattern.
+/// This is the **recommended output format** for cross-language consumption
+/// by gram-js, gram-py, and other language implementations.
+///
+/// # Why AST?
+///
+/// - **Language-agnostic**: Pure JSON, works everywhere
+/// - **Complete**: No information loss
+/// - **Simple**: Just patterns and subjects (no graph concepts)
+/// - **Serializable**: Can store, transmit, or cache as JSON
+///
+/// # Arguments
+///
+/// * `input` - Gram notation text to parse
+///
+/// # Returns
+///
+/// * `Ok(AstPattern)` - The parsed pattern as AST
+/// * `Err(ParseError)` - If parsing fails
+///
+/// # Example
+///
+/// ```rust
+/// use gram_codec::parse_to_ast;
+///
+/// let ast = parse_to_ast("(alice:Person {name: \"Alice\"})")?;
+/// println!("Identity: {}", ast.subject.identity);
+/// println!("Labels: {:?}", ast.subject.labels);
+///
+/// // Serialize to JSON
+/// let json = serde_json::to_string(&ast)?;
+/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// ```
+pub fn parse_to_ast(input: &str) -> Result<AstPattern, ParseError> {
+    let patterns = parse_gram(input)?;
+    
+    // Parser always returns a single file-level pattern (or none for empty input)
+    match patterns.into_iter().next() {
+        Some(pattern) => Ok(AstPattern::from_pattern(&pattern)),
+        None => {
+            // Empty file - return empty pattern
+            Ok(AstPattern::empty())
+        }
     }
 }
 
