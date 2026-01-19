@@ -1,6 +1,6 @@
 // Performance benchmarks for gram codec
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use gram_codec::{parse_gram_notation, serialize_pattern, serialize_patterns};
+use gram_codec::{parse_gram_notation, serialize_pattern, to_gram};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -137,7 +137,7 @@ fn bench_serialize_multiple(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::from_parameter(size),
             &patterns,
-            |b, patterns| b.iter(|| serialize_patterns(black_box(patterns))),
+            |b, patterns| b.iter(|| to_gram(black_box(patterns))),
         );
     }
 
@@ -154,7 +154,7 @@ fn bench_round_trip(c: &mut Criterion) {
         group.bench_with_input(BenchmarkId::from_parameter(size), &input, |b, input| {
             b.iter(|| {
                 let patterns = parse_gram_notation(black_box(input)).unwrap();
-                serialize_patterns(black_box(&patterns))
+                to_gram(black_box(&patterns))
             })
         });
     }

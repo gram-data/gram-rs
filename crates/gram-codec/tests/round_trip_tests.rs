@@ -3,7 +3,7 @@
 //! Tests semantic equivalence: gram -> pattern -> gram -> pattern
 //! The second pattern should equal the first pattern, proving round-trip correctness.
 
-use gram_codec::{parse_gram, serialize_patterns};
+use gram_codec::{parse_gram, to_gram};
 
 /// Helper to test round-trip semantic equivalence
 fn assert_round_trip_equivalent(input: &str) {
@@ -12,7 +12,7 @@ fn assert_round_trip_equivalent(input: &str) {
         parse_gram(input).unwrap_or_else(|e| panic!("First parse failed for '{}': {}", input, e));
 
     // Serialize: pattern1 -> gram2
-    let gram2 = serialize_patterns(&patterns1)
+    let gram2 = to_gram(&patterns1)
         .unwrap_or_else(|e| panic!("Serialization failed for '{}': {}", input, e));
 
     // Second parse: gram2 -> pattern2
@@ -172,15 +172,15 @@ fn test_round_trip_idempotent() {
 
     // First round-trip: gram1 -> pattern1 -> gram2
     let patterns1 = parse_gram(input).unwrap();
-    let gram2 = serialize_patterns(&patterns1).unwrap();
+    let gram2 = to_gram(&patterns1).unwrap();
     let patterns2 = parse_gram(&gram2).unwrap();
 
     // Second round-trip: gram2 -> pattern2 -> gram3
-    let gram3 = serialize_patterns(&patterns2).unwrap();
+    let gram3 = to_gram(&patterns2).unwrap();
     let patterns3 = parse_gram(&gram3).unwrap();
 
     // Third round-trip: gram3 -> pattern3 -> gram4
-    let gram4 = serialize_patterns(&patterns3).unwrap();
+    let gram4 = to_gram(&patterns3).unwrap();
 
     // After stabilization, output should be identical
     assert_eq!(

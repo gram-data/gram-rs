@@ -1,6 +1,6 @@
 //! Serializer integration tests
 
-use gram_codec::{parse_gram_notation, serialize_pattern, serialize_patterns, to_gram_with_header};
+use gram_codec::{parse_gram_notation, serialize_pattern, to_gram, to_gram_with_header};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -141,7 +141,7 @@ fn test_serialize_multiple_patterns() {
         Pattern::point(subject_with_id("c")),
     ];
 
-    let result = serialize_patterns(&patterns);
+    let result = to_gram(&patterns);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), "(a)\n(b)\n(c)");
 }
@@ -207,7 +207,7 @@ fn test_to_gram_with_header_empty() {
     let header = HashMap::new();
     let patterns = vec![Pattern::point(subject_with_id("a"))];
 
-    let result = to_gram_with_header(header, patterns).unwrap();
+    let result = to_gram_with_header(header, &patterns).unwrap();
     assert_eq!(result, "(a)");
 }
 
@@ -220,17 +220,18 @@ fn test_to_gram_with_header_non_empty() {
     );
     let patterns = vec![Pattern::point(subject_with_id("a"))];
 
-    let result = to_gram_with_header(header, patterns).unwrap();
-    assert_eq!(result, "{key: \"val\"} (a)");
+    let result = to_gram_with_header(header, &patterns).unwrap();
+    // Headers are now separated by newlines
+    assert_eq!(result, "{key: \"val\"}\n(a)");
 }
 
 #[test]
-fn test_to_gram_with_custom_separator() {
+fn test_to_gram_standard_separator() {
     let patterns = vec![
         Pattern::point(subject_with_id("a")),
         Pattern::point(subject_with_id("b")),
     ];
 
-    let result = gram_codec::to_gram(patterns, Some("\n")).unwrap();
+    let result = gram_codec::to_gram(&patterns).unwrap();
     assert_eq!(result, "(a)\n(b)");
 }

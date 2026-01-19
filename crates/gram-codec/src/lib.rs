@@ -62,7 +62,7 @@ pub use ast::{AstPattern, AstSubject};
 pub use error::{Location, SerializeError};
 // Use the new nom-based ParseError from the parser module
 pub use parser::ParseError;
-pub use serializer::{serialize_pattern, serialize_patterns, to_gram, to_gram_with_header};
+pub use serializer::{serialize_pattern, to_gram, to_gram_with_header};
 pub use value::Value;
 
 // Re-export Pattern and Subject from pattern-core for convenience

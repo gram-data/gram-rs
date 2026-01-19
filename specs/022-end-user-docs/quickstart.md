@@ -32,7 +32,8 @@ println!("Pattern: {:?}", pattern);
 use gram_codec::parse_gram;
 
 let gram = "(a:Person)-[r:KNOWS]->(b:Person)";
-let pattern = parse_gram(gram).expect("Failed to parse");
+let patterns = parse_gram(gram).expect("Failed to parse");
+let pattern = &patterns[0];
 
 println!("Parsed value: {:?}", pattern.value());
 println!("Element count: {}", pattern.elements().len());

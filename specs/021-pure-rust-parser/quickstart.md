@@ -104,7 +104,7 @@ if validate_gram("(hello)").is_ok() {
 ### Serialization
 
 ```rust
-use gram_codec::{serialize_patterns, serialize_pattern};
+use gram_codec::to_gram;
 
 // Serialize patterns to gram notation
 let pattern = Pattern::from_subject(Subject {
@@ -112,12 +112,12 @@ let pattern = Pattern::from_subject(Subject {
     ..Default::default()
 });
 
-let gram_text = serialize_pattern(&pattern).unwrap();
+let gram_text = to_gram(&[pattern]).unwrap();
 assert_eq!(gram_text, "(hello)");
 
 // Serialize multiple patterns
 let patterns = parse_gram("(a)\n(b)").unwrap();
-let gram_text = serialize_patterns(&patterns).unwrap();
+let gram_text = to_gram(&patterns).unwrap();
 ```
 
 ### Round-Trip (Semantic Equivalence)
@@ -132,7 +132,7 @@ let original = "(a:Label {key: \"value\"})";
 let patterns1 = parse_gram(original).unwrap();
 
 // Serialize
-let serialized = serialize_patterns(&patterns1).unwrap();
+let serialized = to_gram(&patterns1).unwrap();
 
 // Second parse
 let patterns2 = parse_gram(&serialized).unwrap();
@@ -202,13 +202,13 @@ wasm-pack build --target nodejs crates/gram-codec -- --features wasm
 
 ```javascript
 // example.js
-const { parse_gram, serialize_patterns } = require('./pkg/gram_codec.js');
+const { parse_gram, to_gram } = require('./pkg/gram_codec.js');
 
 try {
     const patterns = parse_gram("(a)-->(b)");
     console.log("Parsed:", patterns);
     
-    const serialized = serialize_patterns(patterns);
+    const serialized = to_gram(patterns);
     console.log("Serialized:", serialized);
 } catch (error) {
     console.error("Error:", error.message);
@@ -246,7 +246,7 @@ except ValueError as e:
     print(f"Parse error: {e}")
 
 # Serialize patterns
-gram_text = gram_codec.serialize_patterns(patterns)
+gram_text = gram_codec.to_gram(patterns)
 print(f"Serialized: {gram_text}")
 
 # Round-trip
@@ -456,10 +456,10 @@ parse_gram("");                          // Empty (Ok)
 
 ---
 
-### serialize_patterns
+### to_gram
 
 ```rust
-pub fn serialize_patterns(patterns: &[Pattern]) -> Result<String, SerializeError>
+pub fn to_gram(patterns: &[Pattern]) -> Result<String, SerializeError>
 ```
 
 Serialize Pattern structures to gram notation.
@@ -474,7 +474,7 @@ let pattern = Pattern::from_subject(Subject {
     identifier: Some("hello".to_string()),
     ..Default::default()
 });
-serialize_patterns(&[pattern]);  // "(hello)"
+to_gram(&[pattern]);  // "(hello)"
 ```
 
 ---
@@ -512,7 +512,7 @@ validate_gram("(unclosed");   // Err
 ## FAQ
 
 **Q: Do I need to change my code?**  
-A: No, if you use the public API (`parse_gram`, `serialize_patterns`), no changes are needed.
+A: No, if you use the public API (`parse_gram`, `to_gram`), no changes are needed.
 
 **Q: Will performance be slower?**  
 A: Slightly (within 20% of tree-sitter baseline), but the build simplicity is worth it.
