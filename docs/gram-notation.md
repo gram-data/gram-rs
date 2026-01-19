@@ -86,4 +86,4 @@ This is interpreted as a set of relationships or a larger pattern containing the
 | `(n)`          | 0              | Atomic Pattern (Node) |
 | `@a (n)`       | 1              | Annotation |
 | `(a)-[r]->(b)` | 2              | Relationship |
-| `[v \| a, b, c]` | N              | General Pattern |
+| `[v | a, b, c]` | N              | General Pattern |
