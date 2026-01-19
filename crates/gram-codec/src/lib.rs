@@ -181,10 +181,13 @@ pub fn parse_to_ast(input: &str) -> Result<AstPattern, ParseError> {
 fn wrap_as_document(mut patterns: Vec<Pattern<Subject>>) -> Pattern<Subject> {
     if patterns.len() == 1 {
         let first = &patterns[0];
-        // If it's a "real" pattern (has identity or labels or elements), return it
+        // If it's a "real" pattern (has identity or labels or elements), return it.
+        // Also return it if it has properties but no other fields (a bare record),
+        // because as a single pattern it represents the whole document.
         if !first.value.identity.0.is_empty()
             || !first.value.labels.is_empty()
             || !first.elements.is_empty()
+            || !first.value.properties.is_empty()
         {
             return patterns.remove(0);
         }
@@ -198,6 +201,7 @@ fn wrap_as_document(mut patterns: Vec<Pattern<Subject>>) -> Pattern<Subject> {
         if first.value.identity.0.is_empty()
             && first.value.labels.is_empty()
             && first.elements.is_empty()
+            && !first.value.properties.is_empty()
         {
             properties = patterns.remove(0).value.properties;
         }
