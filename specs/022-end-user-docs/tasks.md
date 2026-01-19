@@ -15,8 +15,8 @@
 
 **Purpose**: Project initialization and documentation structure
 
-- [ ] T001 Create `docs/` directory if not exists
-- [ ] T002 [P] Create placeholder files for `docs/introduction.md`, `docs/gram-notation.md`, and `docs/rust-usage.md`
+- [X] T001 Create `docs/` directory if not exists
+- [X] T002 [P] Create placeholder files for `docs/introduction.md`, `docs/gram-notation.md`, and `docs/rust-usage.md`
 
 ---
 
@@ -24,8 +24,8 @@
 
 **Purpose**: Core documentation structure and common assets
 
-- [ ] T003 Define common terminology and glossary in `docs/introduction.md`
-- [ ] T004 Setup link structure in root `README.md` to point to the new documentation files
+- [X] T003 Define common terminology and glossary in `docs/introduction.md`
+- [X] T004 Setup link structure in root `README.md` to point to the new documentation files
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -39,9 +39,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T005 [US1] Author "What is a Pattern?" section in `docs/introduction.md` based on `gram-hs` inspiration
-- [ ] T006 [US1] Author "Why Patterns Matter?" section in `docs/introduction.md` (explicit vs implicit traversals)
-- [ ] T007 [US1] Add conceptual diagrams or examples (e.g., "Route 66") to `docs/introduction.md`
+- [X] T005 [US1] Author "What is a Pattern?" section in `docs/introduction.md` based on `gram-hs` inspiration
+- [X] T006 [US1] Author "Why Patterns Matter?" section in `docs/introduction.md` (explicit vs implicit traversals)
+- [X] T007 [US1] Add conceptual diagrams or examples (e.g., "Route 66") to `docs/introduction.md`
 
 **Checkpoint**: User Story 1 complete - core conceptual documentation is ready.
 
@@ -55,10 +55,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T008 [US2] Author "Nodes" section in `docs/gram-notation.md` showing `(n)` mapping to atomic patterns
-- [ ] T009 [US2] Author "Relationships" section in `docs/gram-notation.md` showing `(a)-[r]->(b)` mapping to patterns with 2 elements
-- [ ] T010 [US2] Author "Annotations" section in `docs/gram-notation.md` showing `@k(v)` mapping
-- [ ] T011 [US2] Author "Nesting & Paths" section in `docs/gram-notation.md` covering complex structures
+- [X] T008 [US2] Author "Nodes" section in `docs/gram-notation.md` showing `(n)` mapping to atomic patterns
+- [X] T009 [US2] Author "Relationships" section in `docs/gram-notation.md` showing `(a)-[r]->(b)` mapping to patterns with 2 elements
+- [X] T010 [US2] Author "Annotations" section in `docs/gram-notation.md` showing `@k(v)` mapping
+- [X] T011 [US2] Author "Nesting & Paths" section in `docs/gram-notation.md` covering complex structures
 
 **Checkpoint**: User Story 2 complete - syntax reference is ready.
 
@@ -72,10 +72,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T012 [US3] Author dependency setup section in `docs/rust-usage.md` using `pattern-core` and `gram-codec`
-- [ ] T013 [P] [US3] Add programmatic construction examples (point, pattern) in `docs/rust-usage.md`
-- [ ] T014 [P] [US3] Add parsing and serialization examples in `docs/rust-usage.md`
-- [ ] T015 [US3] Add basic query examples (any_value, all_values) in `docs/rust-usage.md`
+- [X] T012 [US3] Author dependency setup section in `docs/rust-usage.md` using `pattern-core` and `gram-codec`
+- [X] T013 [P] [US3] Add programmatic construction examples (point, pattern) in `docs/rust-usage.md`
+- [X] T014 [P] [US3] Add parsing and serialization examples in `docs/rust-usage.md`
+- [X] T015 [US3] Add basic query examples (any_value, all_values) in `docs/rust-usage.md`
 
 **Checkpoint**: All user stories should now be independently functional.
 
@@ -87,21 +87,21 @@
 
 ### Documentation & Examples
 
-- [ ] T016 [P] Review all documentation files for consistent terminology
-- [ ] T017 [P] Cross-link between the new documentation files for better navigation
-- [ ] T018 Run `quickstart.md` validation to ensure code snippets are in sync
+- [X] T016 [P] Review all documentation files for consistent terminology
+- [X] T017 [P] Cross-link between the new documentation files for better navigation
+- [X] T018 Run `quickstart.md` validation to ensure code snippets are in sync
 
 ### Code Quality Checks (REQUIRED)
 
-- [ ] T019 Run `cargo fmt --all` to ensure no incidental formatting issues in code snippets
-- [ ] T020 Run `cargo clippy --workspace -- -D warnings` to ensure implementation remains clean
-- [ ] T021 Run full CI checks with `scripts/ci-local.sh`
-- [ ] T022 Verify all tests pass (`cargo test --workspace`)
+- [X] T019 Run `cargo fmt --all` to ensure no incidental formatting issues in code snippets
+- [X] T020 Run `cargo clippy --workspace -- -D warnings` to ensure implementation remains clean
+- [X] T021 Run full CI checks with `scripts/ci-local.sh`
+- [X] T022 Verify all tests pass (`cargo test --workspace`)
 
 ### Final Verification
 
-- [ ] T023 Update `TODO.md` to mark documentation feature as complete
-- [ ] T024 Ensure all acceptance criteria from `spec.md` are met
+- [X] T023 Update `TODO.md` to mark documentation feature as complete
+- [X] T024 Ensure all acceptance criteria from `spec.md` are met
 
 ---
 
