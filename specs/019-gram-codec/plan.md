@@ -101,7 +101,7 @@ This feature uses **`tree-sitter-gram` as the authoritative reference**, NOT `..
 ✅ **COMPLIANT**
 
 - Use `Result<T, E>` for error handling (parse errors, serialization errors)
-- Rust naming conventions: `parse_gram_notation()`, `serialize_pattern()`
+- Rust naming conventions: `parse_gram_notation()`, `to_gram_pattern()`
 - Value enum for heterogeneous property types (idiomatic Rust pattern)
 - Use `HashMap<String, Value>` for properties (standard Rust collections)
 - Leverage Rust's type system for pattern structure (0, 1, 2, N elements)
@@ -358,8 +358,8 @@ See [data-model.md](data-model.md) for complete data model.
 
 2. **`contracts/serializer-api.md`**: Serializer function signatures
    ```rust
-   pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError>;
-   pub fn serialize_patterns(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError>;
+   pub fn to_gram_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError>;
+   pub fn to_gram_patterns(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError>;
    ```
 
 3. **`contracts/value-enum.md`**: Value enum definition

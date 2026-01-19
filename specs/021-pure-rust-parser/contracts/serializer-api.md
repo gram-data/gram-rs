@@ -6,13 +6,13 @@
 
 ## Public API Functions
 
-### 1. serialize_patterns
+### 1. to_gram_patterns
 
 Serialize a collection of Pattern structures into gram notation text.
 
 **Signature**:
 ```rust
-pub fn serialize_patterns(patterns: &[Pattern]) -> Result<String, SerializeError>
+pub fn to_gram_patterns(patterns: &[Pattern]) -> Result<String, SerializeError>
 ```
 
 **Parameters**:
@@ -55,7 +55,7 @@ let pattern = Pattern::from_subject(Subject {
     record: None,
 });
 assert_eq!(
-    serialize_patterns(&[pattern]).unwrap(),
+    to_gram_patterns(&[pattern]).unwrap(),
     "(hello)"
 );
 
@@ -73,7 +73,7 @@ let rel = Pattern {
     elements: vec![left, right],
 };
 assert_eq!(
-    serialize_patterns(&[rel]).unwrap(),
+    to_gram_patterns(&[rel]).unwrap(),
     "(a)-->(b)"
 );
 
@@ -95,7 +95,7 @@ let pattern = Pattern {
     ],
 };
 assert_eq!(
-    serialize_patterns(&[pattern]).unwrap(),
+    to_gram_patterns(&[pattern]).unwrap(),
     "[team | (alice), (bob)]"
 );
 ```
@@ -111,13 +111,13 @@ assert_eq!(
 
 ---
 
-### 2. serialize_pattern
+### 2. to_gram_pattern
 
 Serialize a single Pattern to gram notation.
 
 **Signature**:
 ```rust
-pub fn serialize_pattern(pattern: &Pattern) -> Result<String, SerializeError>
+pub fn to_gram_pattern(pattern: &Pattern) -> Result<String, SerializeError>
 ```
 
 **Parameters**:
@@ -129,7 +129,7 @@ pub fn serialize_pattern(pattern: &Pattern) -> Result<String, SerializeError>
 
 **Behavior**:
 - Convenience function for single pattern serialization
-- Equivalent to `serialize_patterns(&[pattern])`
+- Equivalent to `to_gram_patterns(&[pattern])`
 
 **Examples**:
 
@@ -139,7 +139,7 @@ let pattern = Pattern::from_subject(Subject {
     ..Default::default()
 });
 assert_eq!(
-    serialize_pattern(&pattern).unwrap(),
+    to_gram_pattern(&pattern).unwrap(),
     "(hello)"
 );
 ```
@@ -162,7 +162,7 @@ assert_eq!(
 **Implementation**:
 
 ```rust
-fn serialize_pattern_dispatch(pattern: &Pattern) -> Result<String, SerializeError> {
+fn to_gram_pattern_dispatch(pattern: &Pattern) -> Result<String, SerializeError> {
     match pattern.elements.len() {
         0 => serialize_node(pattern),
         2 if pattern.elements.iter().all(|e| e.is_node()) => {
@@ -319,7 +319,7 @@ let original = "(a:Label {key: \"value\"})";
 let patterns1 = parse_gram(original).unwrap();
 
 // Serialize
-let serialized = serialize_patterns(&patterns1).unwrap();
+let serialized = to_gram_patterns(&patterns1).unwrap();
 
 // Second parse (from serialized output)
 let patterns2 = parse_gram(&serialized).unwrap();
@@ -371,7 +371,7 @@ fn test_round_trip_semantic_equivalence() {
         let patterns1 = parse_gram(input).unwrap();
         
         // Serialize
-        let serialized = serialize_patterns(&patterns1).unwrap();
+        let serialized = to_gram_patterns(&patterns1).unwrap();
         
         // Second parse (from serialized output)
         let patterns2 = parse_gram(&serialized).unwrap();
@@ -394,9 +394,9 @@ fn test_round_trip_idempotent() {
     let input = "(a:Label {key: \"value\"})";
     
     let p1 = parse_gram(input).unwrap();
-    let g1 = serialize_patterns(&p1).unwrap();
+    let g1 = to_gram_patterns(&p1).unwrap();
     let p2 = parse_gram(&g1).unwrap();
-    let g2 = serialize_patterns(&p2).unwrap();
+    let g2 = to_gram_patterns(&p2).unwrap();
     let p3 = parse_gram(&g2).unwrap();
     
     // After first round-trip, structure and serialization stabilize
@@ -418,7 +418,7 @@ mod tests {
 
     #[test]
     fn serialize_empty_collection() {
-        assert_eq!(serialize_patterns(&[]).unwrap(), "");
+        assert_eq!(to_gram_patterns(&[]).unwrap(), "");
     }
 
     #[test]
@@ -427,7 +427,7 @@ mod tests {
             identifier: Some("hello".to_string()),
             ..Default::default()
         });
-        assert_eq!(serialize_patterns(&[pattern]).unwrap(), "(hello)");
+        assert_eq!(to_gram_patterns(&[pattern]).unwrap(), "(hello)");
     }
 
     #[test]
@@ -438,7 +438,7 @@ mod tests {
             ..Default::default()
         });
         assert_eq!(
-            serialize_patterns(&[pattern]).unwrap(),
+            to_gram_patterns(&[pattern]).unwrap(),
             "(a:Person:User)"
         );
     }
@@ -455,7 +455,7 @@ mod tests {
             ..Default::default()
         });
         
-        let result = serialize_patterns(&[pattern]).unwrap();
+        let result = to_gram_patterns(&[pattern]).unwrap();
         assert!(result.contains("name: \"Alice\""));
         assert!(result.contains("age: 30"));
     }
@@ -475,7 +475,7 @@ mod tests {
             elements: vec![left, right],
         };
         
-        assert_eq!(serialize_patterns(&[rel]).unwrap(), "(a)-->(b)");
+        assert_eq!(to_gram_patterns(&[rel]).unwrap(), "(a)-->(b)");
     }
 
     #[test]
@@ -492,7 +492,7 @@ mod tests {
             ..Default::default()
         });
         
-        let result = serialize_patterns(&[pattern]).unwrap();
+        let result = to_gram_patterns(&[pattern]).unwrap();
         assert!(result.contains("\\\""));
     }
 }
@@ -512,4 +512,4 @@ mod tests {
 | Performance | <10% round-trip overhead | Benchmarks |
 | Thread Safety | No shared state | Code review |
 
-**Key Invariant**: `parse_gram(serialize_patterns(patterns)) == patterns` for all valid patterns
+**Key Invariant**: `parse_gram(to_gram_patterns(patterns)) == patterns` for all valid patterns

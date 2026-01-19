@@ -347,7 +347,7 @@ pub fn parse_gram_notation(input: &str) -> Result<Vec<Pattern<Subject>>, ParseEr
 }
 
 // Serializer returns Result with SerializeError
-pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError> {
+pub fn to_gram_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError> {
     let gram = match pattern.elements().len() {
         0 => serialize_node_pattern(pattern)?,  // Propagate serialization error
         2 if is_relationship_pattern(pattern) => serialize_relationship_pattern(pattern)?,
@@ -504,7 +504,7 @@ mod integration_tests {
     fn test_serialization_validation() {
         // Create an invalid pattern that cannot be serialized
         let pattern = /* ... */;
-        let result = serialize_pattern(&pattern);
+        let result = to_gram_pattern(&pattern);
         assert!(result.is_err());
     }
 }

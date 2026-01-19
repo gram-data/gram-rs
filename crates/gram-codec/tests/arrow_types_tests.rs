@@ -1,6 +1,6 @@
 //! Arrow type and relationship pattern tests for Phase 5
 
-use gram_codec::{parse_gram_notation, serialize_pattern};
+use gram_codec::{parse_gram_notation, to_gram_pattern};
 
 #[test]
 fn test_right_arrow_simple() {
@@ -89,7 +89,7 @@ fn test_relationship_with_label_and_properties() {
 fn test_round_trip_left_arrow() {
     let original = "(a)<--(b)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
 
     // After parsing (a)<--(b), we get b-->a
     // After serializing, we get (b)-->(a)
@@ -101,7 +101,7 @@ fn test_round_trip_left_arrow() {
 fn test_round_trip_bidirectional() {
     let original = "(a)<-->(b)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     assert_eq!(parsed[0].elements.len(), 2);
@@ -112,7 +112,7 @@ fn test_round_trip_bidirectional() {
 fn test_round_trip_squiggle() {
     let original = "(a)~~(b)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     assert_eq!(parsed[0].elements.len(), 2);
@@ -123,7 +123,7 @@ fn test_round_trip_squiggle() {
 fn test_round_trip_labeled_relationship() {
     let original = "(a)-[:KNOWS]->(b)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
 
     // Should preserve label
     assert!(serialized.contains("KNOWS"));

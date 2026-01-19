@@ -224,14 +224,14 @@ fn test_undirected_chain() {
 
 #[test]
 fn test_round_trip_preserves_semantics_double_stroke() {
-    use gram_codec::serialize_pattern;
+    use gram_codec::to_gram_pattern;
 
     // Parse double-stroke right arrow
     let original = "(a)==>(b)";
     let parsed = parse_gram_notation(original).unwrap();
 
     // Serialize (will output canonical single-stroke form)
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
 
     // Re-parse serialized form
     let reparsed = parse_gram_notation(&serialized).unwrap();
@@ -250,14 +250,14 @@ fn test_round_trip_preserves_semantics_double_stroke() {
 
 #[test]
 fn test_round_trip_preserves_semantics_squiggle() {
-    use gram_codec::serialize_pattern;
+    use gram_codec::to_gram_pattern;
 
     // Parse squiggle right arrow
     let original = "(a)~~>(b)";
     let parsed = parse_gram_notation(original).unwrap();
 
     // Serialize
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
 
     // Re-parse
     let reparsed = parse_gram_notation(&serialized).unwrap();

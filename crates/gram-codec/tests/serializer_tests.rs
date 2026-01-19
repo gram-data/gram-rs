@@ -1,6 +1,6 @@
 //! Serializer integration tests
 
-use gram_codec::{parse_gram_notation, serialize_pattern, to_gram, to_gram_with_header};
+use gram_codec::{parse_gram_notation, to_gram, to_gram_pattern, to_gram_with_header};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -25,7 +25,7 @@ fn empty_subject() -> Subject {
 #[test]
 fn test_serialize_empty_node() {
     let pattern = Pattern::point(empty_subject());
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok(), "Failed to serialize: {:?}", result.err());
     assert_eq!(result.unwrap(), "()");
 }
@@ -33,7 +33,7 @@ fn test_serialize_empty_node() {
 #[test]
 fn test_serialize_node_with_identifier() {
     let pattern = Pattern::point(subject_with_id("hello"));
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), "(hello)");
 }
@@ -44,7 +44,7 @@ fn test_serialize_node_with_label() {
     subject.labels.insert("Person".to_string());
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), "(a:Person)");
 }
@@ -56,7 +56,7 @@ fn test_serialize_node_with_multiple_labels() {
     subject.labels.insert("Employee".to_string());
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     let output = result.unwrap();
     // Labels should be sorted alphabetically
@@ -76,7 +76,7 @@ fn test_serialize_node_with_properties() {
         .insert("age".to_string(), pattern_core::Value::VInteger(30));
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     let output = result.unwrap();
     eprintln!("Serialized output: {}", output);
@@ -90,7 +90,7 @@ fn test_serialize_simple_relationship() {
     let right = Pattern::point(subject_with_id("b"));
 
     let pattern = Pattern::pattern(empty_subject(), vec![left, right]);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), "(a)-->(b)");
 }
@@ -104,7 +104,7 @@ fn test_serialize_relationship_with_label() {
     edge_subject.labels.insert("KNOWS".to_string());
 
     let pattern = Pattern::pattern(edge_subject, vec![left, right]);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), "(a)-[:KNOWS]->(b)");
 }
@@ -115,7 +115,7 @@ fn test_serialize_subject_pattern_with_elements() {
     let elem2 = Pattern::point(subject_with_id("bob"));
 
     let pattern = Pattern::pattern(subject_with_id("team"), vec![elem1, elem2]);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     // Per spec: 2-element patterns with atomic elements serialize as relationships
     // regardless of identifier, so this becomes a relationship with edge identifier
@@ -128,7 +128,7 @@ fn test_serialize_nested_subject_pattern() {
     let inner = Pattern::pattern(subject_with_id("inner"), vec![leaf]);
     let outer = Pattern::pattern(subject_with_id("outer"), vec![inner]);
 
-    let result = serialize_pattern(&outer);
+    let result = to_gram_pattern(&outer);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), "[outer | [inner | (leaf)]]");
 }
@@ -149,7 +149,7 @@ fn test_serialize_multiple_patterns() {
 #[test]
 fn test_serialize_identifier_with_special_chars_needs_quoting() {
     let pattern = Pattern::point(subject_with_id("hello world"));
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     let output = result.unwrap();
     // Should be quoted because it contains a space
@@ -159,7 +159,7 @@ fn test_serialize_identifier_with_special_chars_needs_quoting() {
 #[test]
 fn test_serialize_identifier_starting_with_digit_needs_quoting() {
     let pattern = Pattern::point(subject_with_id("42node"));
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     let output = result.unwrap();
     // Should be quoted because it starts with a digit
@@ -170,7 +170,7 @@ fn test_serialize_identifier_starting_with_digit_needs_quoting() {
 fn test_round_trip_simple_node() {
     let original = "(hello)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     // Check structural equivalence
@@ -182,7 +182,7 @@ fn test_round_trip_simple_node() {
 fn test_round_trip_relationship() {
     let original = "(a)-->(b)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     // Check structural equivalence
@@ -194,7 +194,7 @@ fn test_round_trip_relationship() {
 fn test_round_trip_subject_pattern() {
     let original = "[team | (alice), (bob)]";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     // Check structural equivalence

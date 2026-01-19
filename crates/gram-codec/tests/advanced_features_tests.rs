@@ -1,6 +1,6 @@
 //! Advanced features tests for Phase 5 (root records, path patterns, Unicode)
 
-use gram_codec::{parse_gram_notation, serialize_pattern};
+use gram_codec::{parse_gram_notation, to_gram_pattern};
 
 // ============================================================================
 // Root Record Support (T106)
@@ -78,7 +78,7 @@ fn test_path_pattern_nested_structure() {
 fn test_round_trip_simple_path() {
     let input = "(a)-->(b)-->(c)";
     let parsed = parse_gram_notation(input).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     // Structure should be preserved
@@ -133,7 +133,7 @@ fn test_round_trip_unicode() {
     // Unicode identifiers must be quoted
     let input = "(\"世界\")";
     let parsed = parse_gram_notation(input).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     assert_eq!(parsed[0].value.identity.0, reparsed[0].value.identity.0);
@@ -151,7 +151,7 @@ fn test_serialize_unicode_identifier() {
     };
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     let output = result.unwrap();
     assert!(output.contains("日本"));
@@ -191,7 +191,7 @@ fn test_serialize_identifier_with_special_chars() {
     };
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok());
     let output = result.unwrap();
     // Should be quoted because of hyphen
@@ -244,7 +244,7 @@ fn test_serialize_large_property_array() {
         .insert("numbers".to_string(), Value::VArray(array_values));
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok(), "Failed to serialize large array");
 }
 
@@ -276,7 +276,7 @@ fn test_deeply_nested_subject_patterns() {
 fn test_round_trip_deeply_nested() {
     let input = "[l0 | [l1 | [l2 | [l3 | (leaf)]]]]";
     let parsed = parse_gram_notation(input).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     // Verify nesting is preserved

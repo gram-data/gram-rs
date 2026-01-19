@@ -47,7 +47,7 @@ println!("Team has {} members", patterns[0].elements.len());
 ### Serializing Patterns
 
 ```rust
-use gram_codec::{serialize_pattern, to_gram};
+use gram_codec::{to_gram_pattern, to_gram};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -60,7 +60,7 @@ let subject = Subject {
 let pattern = Pattern::point(subject);
 
 // Serialize a single pattern
-let gram_text = serialize_pattern(&pattern)?;
+let gram_text = to_gram_pattern(&pattern)?;
 println!("{}", gram_text); // Output: (hello)
 
 // Serialize multiple patterns
@@ -71,7 +71,7 @@ println!("{}", multiple); // Output: (hello)\n(hello)
 ### Round-Trip Correctness
 
 ```rust
-use gram_codec::{parse_gram, serialize_pattern};
+use gram_codec::{parse_gram, to_gram_pattern};
 
 let original = "(alice:Person {name: \"Alice\"})";
 
@@ -79,7 +79,7 @@ let original = "(alice:Person {name: \"Alice\"})";
 let parsed = parse_gram(original)?;
 
 // Serialize
-let serialized = serialize_pattern(&parsed[0])?;
+let serialized = to_gram_pattern(&parsed[0])?;
 
 // Re-parse
 let reparsed = parse_gram(&serialized)?;

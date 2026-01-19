@@ -510,7 +510,7 @@ fn bench_round_trip(c: &mut Criterion) {
     c.bench_function("round_trip", |b| {
         b.iter(|| {
             let patterns = parse_gram(black_box(input)).unwrap();
-            let serialized = serialize_patterns(&patterns).unwrap();
+            let serialized = to_gram_patterns(&patterns).unwrap();
             parse_gram(&serialized).unwrap()
         })
     });
@@ -553,7 +553,7 @@ let original_gram = "(a:Label {key: \"value\"})";
 let patterns1 = parse_gram(original_gram).unwrap();
 
 // Serialize
-let serialized = serialize_patterns(&patterns1).unwrap();
+let serialized = to_gram_patterns(&patterns1).unwrap();
 
 // Second parse (from serialized output)
 let patterns2 = parse_gram(&serialized).unwrap();
@@ -568,7 +568,7 @@ assert_eq!(patterns1, patterns2);  // ✅ Tests semantic preservation
 // INCORRECT: Only tests syntactic round-trip
 let original = "(a:Label {key: \"value\"})";
 let patterns = parse_gram(original).unwrap();
-let serialized = serialize_patterns(&patterns).unwrap();
+let serialized = to_gram_patterns(&patterns).unwrap();
 
 // This would fail due to formatting differences:
 // Original:  "(a:Label {key: \"value\"})"
@@ -601,7 +601,7 @@ fn test_round_trip_semantic_equivalence() {
         let patterns1 = parse_gram(input).unwrap();
         
         // Serialize
-        let serialized = serialize_patterns(&patterns1).unwrap();
+        let serialized = to_gram_patterns(&patterns1).unwrap();
         
         // Parse serialized output
         let patterns2 = parse_gram(&serialized).unwrap();
@@ -626,14 +626,14 @@ proptest! {
     #[test]
     fn round_trip_preserves_semantics(pattern in arbitrary_pattern()) {
         // Serialize
-        let gram1 = serialize_pattern(&pattern).unwrap();
+        let gram1 = to_gram_pattern(&pattern).unwrap();
         
         // Parse
         let parsed = parse_gram(&gram1).unwrap();
         assert_eq!(parsed.len(), 1);
         
         // Serialize again
-        let gram2 = serialize_pattern(&parsed[0]).unwrap();
+        let gram2 = to_gram_pattern(&parsed[0]).unwrap();
         
         // Parse again
         let re_parsed = parse_gram(&gram2).unwrap();

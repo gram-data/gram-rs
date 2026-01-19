@@ -58,7 +58,7 @@ As a JavaScript/TypeScript developer, I need to use gram-codec in my web applica
 **Acceptance Scenarios**:
 
 1. **Given** a Vite web app project, **When** installing gram-codec via npm and importing it, **Then** the module loads and works without additional vite configuration or plugins
-2. **Given** a Node.js project using ES modules, **When** importing gram-codec, **Then** parse_gram and serialize_pattern functions work correctly
+2. **Given** a Node.js project using ES modules, **When** importing gram-codec, **Then** parse_gram and to_gram_pattern functions work correctly
 3. **Given** a Node.js project using CommonJS, **When** requiring gram-codec, **Then** all API functions are available and work correctly
 4. **Given** a Webpack project, **When** building with gram-codec, **Then** the build succeeds and the bundled app works without special WASM configuration
 5. **Given** a browser environment, **When** loading gram-codec WASM, **Then** initialization completes in under 100ms and the module is ready to use
