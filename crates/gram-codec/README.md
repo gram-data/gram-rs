@@ -29,25 +29,25 @@ pattern-core = { path = "../pattern-core" }
 ### Parsing Gram Notation
 
 ```rust
-use gram_codec::parse_gram_notation;
+use gram_codec::parse_gram;
 
 // Parse a simple node
-let patterns = parse_gram_notation("(hello)")?;
+let patterns = parse_gram("(hello)")?;
 println!("Identifier: {}", patterns[0].value.identity.0);
 
 // Parse a relationship
-let patterns = parse_gram_notation("(alice)-[:KNOWS]->(bob)")?;
+let patterns = parse_gram("(alice)-[:KNOWS]->(bob)")?;
 println!("Relationship with {} elements", patterns[0].elements.len());
 
 // Parse a subject pattern
-let patterns = parse_gram_notation("[team | (alice), (bob)]")?;
+let patterns = parse_gram("[team | (alice), (bob)]")?;
 println!("Team has {} members", patterns[0].elements.len());
 ```
 
 ### Serializing Patterns
 
 ```rust
-use gram_codec::serialize_pattern;
+use gram_codec::{serialize_pattern, to_gram};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -59,26 +59,30 @@ let subject = Subject {
 };
 let pattern = Pattern::point(subject);
 
-// Serialize to Gram notation
+// Serialize a single pattern
 let gram_text = serialize_pattern(&pattern)?;
 println!("{}", gram_text); // Output: (hello)
+
+// Serialize multiple patterns
+let multiple = to_gram(&[pattern.clone(), pattern])?;
+println!("{}", multiple); // Output: (hello)\n(hello)
 ```
 
 ### Round-Trip Correctness
 
 ```rust
-use gram_codec::{parse_gram_notation, serialize_pattern};
+use gram_codec::{parse_gram, serialize_pattern};
 
 let original = "(alice:Person {name: \"Alice\"})";
 
 // Parse
-let parsed = parse_gram_notation(original)?;
+let parsed = parse_gram(original)?;
 
 // Serialize
 let serialized = serialize_pattern(&parsed[0])?;
 
 // Re-parse
-let reparsed = parse_gram_notation(&serialized)?;
+let reparsed = parse_gram(&serialized)?;
 
 // Verify structural equivalence
 assert_eq!(parsed[0].value.identity, reparsed[0].value.identity);
@@ -288,26 +292,17 @@ cargo test --package gram-codec --test advanced_features_tests   # 22 tests
 
 ## Grammar Authority
 
-This codec uses [`tree-sitter-gram`](https://github.com/gram-data/tree-sitter-gram) as the authoritative grammar specification. The grammar is included as a git submodule:
-
-```bash
-# Initialize submodule
-git submodule update --init --recursive
-
-# Validate gram notation with gram-lint
-gram-lint -e "(hello)-->(world)"
-gram-lint -e "(hello)-->(world)" --tree  # Show parse tree
-```
+This codec uses [`tree-sitter-gram`](https://github.com/gram-data/tree-sitter-gram) as the authoritative grammar specification. The pure Rust implementation is validated for 100% conformance with the tree-sitter-gram test corpus.
 
 ## Architecture
 
 The codec consists of several modules:
 
-- **`parser`**: Transforms Gram notation text → Pattern structures using tree-sitter-gram
+- **`parser`**: Transforms Gram notation text → Pattern structures using a pure Rust `nom` implementation
 - **`serializer`**: Transforms Pattern structures → Gram notation text
-- **`transform`**: CST (Concrete Syntax Tree) → AST (Abstract Syntax Tree) transformation
+- **`ast`**: AST (Abstract Syntax Tree) types for cross-language JSON serialization
 - **`value`**: Value enum for property types (String, Integer, Decimal, Boolean, Array, Range)
-- **`error`**: Error types with location information and error recovery
+- **`error`**: Error types with location information
 
 ## Multi-Platform Support
 
@@ -371,14 +366,6 @@ Benchmarks cover:
 - Serialization (single and multiple patterns)
 - Round-trip correctness (parse → serialize → parse)
 - Complex patterns with mixed syntax
-
-## Constitutional Compliance
-
-**Note**: This codec deviates from the standard gram-rs constitution (Principle I: Reference Implementation Fidelity) by using `tree-sitter-gram` instead of `gram-hs` as the authoritative grammar reference. This deviation is justified because:
-
-1. **Explicit Requirement**: Feature specification requires tree-sitter-gram as authority
-2. **Validation Integration**: Enables `gram-lint` validation of all codec output
-3. **Multi-Platform Support**: Leverages tree-sitter's WASM support for browser deployment
 
 ## License
 

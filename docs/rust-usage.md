@@ -99,8 +99,8 @@ use gram_codec::to_gram;
 use pattern_core::{Pattern, Subject};
 
 let node = Pattern::point(Subject::from_identity("node"));
-// to_gram takes a Vec of patterns and an optional separator (defaults to space)
-let gram_string = to_gram(vec![node], None).unwrap();
+// to_gram takes a slice of patterns and joins them with newlines
+let gram_string = to_gram(&[node]).unwrap();
 
 assert_eq!(gram_string, "(node)");
 ```
@@ -114,9 +114,9 @@ let mut header = Record::new();
 header.insert("type".to_string(), Value::VString("graph".to_string()));
 
 let node = Pattern::point(Subject::from_identity("a"));
-let output = to_gram_with_header(header, vec![node]).unwrap();
+let output = to_gram_with_header(header, &[node]).unwrap();
 
-assert_eq!(output, "{type: \"graph\"} (a)");
+assert_eq!(output, "{type: \"graph\"}\n(a)");
 ```
 
 ## Basic Queries

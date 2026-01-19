@@ -19,32 +19,27 @@ pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, Serialize
 
 /// Serialize a sequence of patterns to gram notation.
 ///
-/// Writes each pattern in sequence, joined by the provided separator (defaults to space).
+/// Writes each pattern in sequence, joined by newlines.
 ///
 /// # Arguments
 ///
 /// * `patterns` - Patterns to serialize
-/// * `separator` - Optional separator string (e.g., Some(" ") or Some("\n")). Defaults to Some(" ") if None.
 ///
 /// # Returns
 ///
 /// * `Ok(String)` - Valid Gram notation
-pub fn to_gram(
-    patterns: Vec<Pattern<Subject>>,
-    separator: Option<&str>,
-) -> Result<String, SerializeError> {
-    let sep = separator.unwrap_or(" ");
+pub fn to_gram(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError> {
     patterns
-        .into_iter()
-        .map(|p| serialize_pattern(&p))
+        .iter()
+        .map(serialize_pattern)
         .collect::<Result<Vec<_>, _>>()
-        .map(|lines| lines.join(sep))
+        .map(|lines| lines.join("\n"))
 }
 
 /// Serializes patterns with a leading header record.
 ///
-/// Emits the header as a top-level record followed by the patterns.
-/// Uses a space as the separator between patterns.
+/// Emits the header as a top-level record followed by the patterns,
+/// joined by newlines.
 ///
 /// # Arguments
 ///
@@ -56,25 +51,18 @@ pub fn to_gram(
 /// * `Ok(String)` - Valid Gram notation with header
 pub fn to_gram_with_header(
     header: crate::Record,
-    patterns: Vec<Pattern<Subject>>,
+    patterns: &[Pattern<Subject>],
 ) -> Result<String, SerializeError> {
     let header_str = serialize_record(&header)?;
-    let patterns_str = to_gram(patterns, Some(" "))?;
+    let patterns_str = to_gram(patterns)?;
 
     if patterns_str.is_empty() {
         Ok(header_str)
     } else if header_str.is_empty() {
         Ok(patterns_str)
     } else {
-        Ok(format!("{} {}", header_str, patterns_str))
+        Ok(format!("{}\n{}", header_str, patterns_str))
     }
-}
-
-/// Serialize multiple Pattern structures to Gram notation
-///
-/// This is a convenience wrapper around `to_gram` that uses newlines as separators.
-pub fn serialize_patterns(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError> {
-    to_gram(patterns.to_vec(), Some("\n"))
 }
 
 /// Format types for gram notation serialization

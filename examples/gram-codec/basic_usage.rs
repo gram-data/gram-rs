@@ -2,7 +2,7 @@
 //!
 //! Run with: `cargo run --package gram-codec --example basic_usage`
 
-use gram_codec::{parse_gram_notation, serialize_pattern, serialize_patterns};
+use gram_codec::{parse_gram_notation, serialize_pattern, to_gram};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -104,7 +104,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             properties: HashMap::new(),
         }),
     ];
-    let gram_output = serialize_patterns(&patterns)?;
+    let gram_output = to_gram(&patterns)?;
     println!("   Output:\n{}\n", gram_output);
 
     // Example 10: Error handling

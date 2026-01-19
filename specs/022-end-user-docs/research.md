@@ -18,7 +18,7 @@
 
 **Findings**:
 - `pattern-core` provides `Pattern<V>`.
-- `gram-codec` provides `parse_gram(input)` and `to_gram(pattern)`.
+- `gram-codec` provides `parse_gram(input)` and `to_gram(&[pattern])`.
 
 ---
 

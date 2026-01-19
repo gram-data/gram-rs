@@ -117,8 +117,7 @@ pub fn round_trip(input: &str) -> Result<String, JsValue> {
         crate::parse_gram(input).map_err(|e| JsValue::from_str(&format!("Parse error: {}", e)))?;
 
     // Serialize all patterns
-    crate::serialize_patterns(&patterns)
-        .map_err(|e| JsValue::from_str(&format!("Serialize error: {}", e)))
+    crate::to_gram(&patterns).map_err(|e| JsValue::from_str(&format!("Serialize error: {}", e)))
 }
 
 /// Parse gram notation to AST (JavaScript-friendly)

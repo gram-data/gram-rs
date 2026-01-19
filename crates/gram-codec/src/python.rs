@@ -153,30 +153,7 @@ fn round_trip(input: &str) -> PyResult<String> {
     let patterns = crate::parse_gram(input)
         .map_err(|e| PyValueError::new_err(format!("Parse error: {}", e)))?;
 
-    crate::serialize_patterns(&patterns)
-        .map_err(|e| PyValueError::new_err(format!("Serialize error: {}", e)))
-}
-
-/// Serialize patterns to gram notation
-///
-/// Args:
-///     patterns (list): List of pattern objects
-///
-/// Returns:
-///     str: Serialized gram notation
-///
-/// Raises:
-///     ValueError: If serialization fails
-///
-/// Note: This function is currently a placeholder. For now, use round_trip()
-///     for parse -> serialize workflows.
-#[pyfunction]
-fn serialize_patterns(_patterns: Bound<'_, PyAny>) -> PyResult<String> {
-    // For now, return an error indicating this is not yet implemented
-    // In the future, this would take Python pattern objects and serialize them
-    Err(PyValueError::new_err(
-        "Direct pattern serialization not yet implemented. Use round_trip() instead.",
-    ))
+    crate::to_gram(&patterns).map_err(|e| PyValueError::new_err(format!("Serialize error: {}", e)))
 }
 
 /// Parse gram notation to AST (Python dict)
@@ -245,7 +222,6 @@ fn gram_codec(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_to_ast, m)?)?;
     m.add_function(wrap_pyfunction!(validate_gram, m)?)?;
     m.add_function(wrap_pyfunction!(round_trip, m)?)?;
-    m.add_function(wrap_pyfunction!(serialize_patterns, m)?)?;
     m.add_function(wrap_pyfunction!(version, m)?)?;
     m.add_class::<ParseResult>()?;
 
