@@ -47,7 +47,7 @@ Created comprehensive API contracts in `contracts/` directory:
    - Testing strategy
 
 2. **[contracts/serializer-api.md](contracts/serializer-api.md)**
-   - Public serialization API: `serialize_pattern()`, `serialize_patterns()`
+   - Public serialization API: `to_gram_pattern()`, `to_gram_patterns()`
    - Format selection logic
    - Value serialization rules
    - Validation requirements

@@ -1,6 +1,6 @@
 //! Edge case and complex scenario tests for Phase 5
 
-use gram_codec::{parse_gram_notation, serialize_pattern};
+use gram_codec::{parse_gram_notation, to_gram_pattern};
 
 // ============================================================================
 // Nesting and Depth Tests
@@ -215,7 +215,7 @@ fn test_newlines_between_patterns() {
 fn test_round_trip_nested_subject_pattern() {
     let original = "[outer | [inner | (leaf)]]";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     assert_eq!(parsed[0].elements.len(), reparsed[0].elements.len());
@@ -229,7 +229,7 @@ fn test_round_trip_nested_subject_pattern() {
 fn test_round_trip_complex_relationship() {
     let original = "(a:Person {age: 30})-[:KNOWS {since: 2020}]->(b:Person {age: 25})";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     // Verify structure is preserved
@@ -243,7 +243,7 @@ fn test_round_trip_complex_relationship() {
 fn test_round_trip_multiple_labels() {
     let original = "(a:Label1:Label2)";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
 
     assert_eq!(parsed[0].value.labels.len(), 2);

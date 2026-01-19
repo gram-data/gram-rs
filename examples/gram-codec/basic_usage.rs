@@ -2,7 +2,7 @@
 //!
 //! Run with: `cargo run --package gram-codec --example basic_usage`
 
-use gram_codec::{parse_gram_notation, serialize_pattern, to_gram};
+use gram_codec::{parse_gram_notation, to_gram, to_gram_pattern};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         properties: HashMap::new(),
     };
     let pattern = Pattern::point(subject);
-    let gram_output = serialize_pattern(&pattern)?;
+    let gram_output = to_gram_pattern(&pattern)?;
     println!("   Output: {}\n", gram_output);
 
     // Example 8: Round-trip (parse → serialize → parse)
@@ -75,7 +75,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("   Original: {}", original);
 
     let parsed = parse_gram_notation(original)?;
-    let serialized = serialize_pattern(&parsed[0])?;
+    let serialized = to_gram_pattern(&parsed[0])?;
     println!("   Serialized: {}", serialized);
 
     let reparsed = parse_gram_notation(&serialized)?;

@@ -92,17 +92,25 @@ assert_eq!(patterns.len(), 1);
 ```
 
 ### Serializing to Gram Notation
-Use `to_gram` to serialize patterns back to notation.
+Use `to_gram_pattern` to serialize a single pattern, or `to_gram` for a collection of patterns.
 
 ```rust
-use gram_codec::to_gram;
+use gram_codec::to_gram_pattern;
 use pattern_core::{Pattern, Subject};
 
 let node = Pattern::point(Subject::from_identity("node"));
-// to_gram takes a slice of patterns and joins them with newlines
-let gram_string = to_gram(&[node]).unwrap();
+let gram_string = to_gram_pattern(&node).unwrap();
 
 assert_eq!(gram_string, "(node)");
+```
+
+### Serializing Multiple Patterns
+Use `to_gram` to serialize a slice of patterns, which joins them with newlines.
+
+```rust
+use gram_codec::to_gram;
+// ...
+let gram_string = to_gram(&[node1, node2]).unwrap();
 ```
 
 ### Serializing with a Header

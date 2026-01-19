@@ -1,6 +1,6 @@
 //! Comprehensive value type tests for Phase 5
 
-use gram_codec::{parse_gram_notation, serialize_pattern};
+use gram_codec::{parse_gram_notation, to_gram_pattern};
 
 #[test]
 fn test_parse_integer_values() {
@@ -131,7 +131,7 @@ fn test_serialize_all_value_types() {
         .insert("boolean".to_string(), Value::VBoolean(true));
 
     let pattern = Pattern::point(subject);
-    let result = serialize_pattern(&pattern);
+    let result = to_gram_pattern(&pattern);
     assert!(result.is_ok(), "Failed to serialize: {:?}", result.err());
 
     let output = result.unwrap();
@@ -147,7 +147,7 @@ fn test_round_trip_numeric_values() {
     // Integer
     let original = "(a {count: 42})";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
     assert_eq!(
         parsed[0].value.properties.len(),
@@ -157,7 +157,7 @@ fn test_round_trip_numeric_values() {
     // Decimal
     let original = "(a {pi: 3.14})";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
     assert_eq!(
         parsed[0].value.properties.len(),
@@ -169,7 +169,7 @@ fn test_round_trip_numeric_values() {
 fn test_round_trip_boolean() {
     let original = "(a {active: true, inactive: false})";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
     assert_eq!(parsed[0].value.properties.len(), 2);
     assert_eq!(reparsed[0].value.properties.len(), 2);
@@ -179,7 +179,7 @@ fn test_round_trip_boolean() {
 fn test_round_trip_arrays() {
     let original = "(a {tags: [\"rust\", \"wasm\"]})";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
     assert_eq!(
         parsed[0].value.properties.len(),
@@ -191,7 +191,7 @@ fn test_round_trip_arrays() {
 fn test_round_trip_ranges() {
     let original = "(a {range: 1..10})";
     let parsed = parse_gram_notation(original).unwrap();
-    let serialized = serialize_pattern(&parsed[0]).unwrap();
+    let serialized = to_gram_pattern(&parsed[0]).unwrap();
     let reparsed = parse_gram_notation(&serialized).unwrap();
     assert_eq!(
         parsed[0].value.properties.len(),

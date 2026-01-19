@@ -16,7 +16,7 @@
 //! ## Example Usage
 //!
 //! ```rust,no_run
-//! use gram_codec::{parse_gram_notation, serialize_pattern};
+//! use gram_codec::{parse_gram_notation, to_gram_pattern};
 //!
 //! // Parse gram notation into patterns
 //! let gram_text = "(alice:Person {name: \"Alice\"})-[:KNOWS]->(bob:Person {name: \"Bob\"})";
@@ -24,7 +24,7 @@
 //!
 //! // Serialize patterns back to gram notation
 //! for pattern in &patterns {
-//!     let output = serialize_pattern(pattern)?;
+//!     let output = to_gram_pattern(pattern)?;
 //!     println!("{}", output);
 //! }
 //! # Ok::<(), Box<dyn std::error::Error>>(())
@@ -62,7 +62,7 @@ pub use ast::{AstPattern, AstSubject};
 pub use error::{Location, SerializeError};
 // Use the new nom-based ParseError from the parser module
 pub use parser::ParseError;
-pub use serializer::{serialize_pattern, to_gram, to_gram_with_header};
+pub use serializer::{to_gram, to_gram_pattern, to_gram_with_header};
 pub use value::Value;
 
 // Re-export Pattern and Subject from pattern-core for convenience

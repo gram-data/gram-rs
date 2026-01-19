@@ -5,7 +5,7 @@ use pattern_core::{Pattern, Subject};
 use std::collections::HashMap;
 
 /// Serialize a Pattern structure to Gram notation
-pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError> {
+pub fn to_gram_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError> {
     let format = select_format(pattern);
 
     match format {
@@ -31,7 +31,7 @@ pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, Serialize
 pub fn to_gram(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError> {
     patterns
         .iter()
-        .map(serialize_pattern)
+        .map(to_gram_pattern)
         .collect::<Result<Vec<_>, _>>()
         .map(|lines| lines.join("\n"))
 }
@@ -202,7 +202,7 @@ fn serialize_subject_pattern(pattern: &Pattern<Subject>) -> Result<String, Seria
     let elements_str = pattern
         .elements
         .iter()
-        .map(serialize_pattern)
+        .map(to_gram_pattern)
         .collect::<Result<Vec<_>, _>>()?
         .join(", ");
 
@@ -233,7 +233,7 @@ fn serialize_annotation_pattern(pattern: &Pattern<Subject>) -> Result<String, Se
     // Sort for consistent output
     annotations.sort();
 
-    let element_str = serialize_pattern(&pattern.elements[0])?;
+    let element_str = to_gram_pattern(&pattern.elements[0])?;
 
     Ok(format!("{} {}", annotations.join(" "), element_str))
 }

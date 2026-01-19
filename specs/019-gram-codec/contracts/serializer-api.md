@@ -29,25 +29,25 @@ The serializer transforms Pattern data structures into valid gram notation text.
 ///
 /// # Examples
 /// ```
-/// use gram_codec::serialize_pattern;
+/// use gram_codec::to_gram_pattern;
 /// use pattern_core::Pattern;
 ///
 /// // Node pattern (0 elements)
 /// let pattern = Pattern::point(Subject::with_identifier("hello"));
-/// let gram = serialize_pattern(&pattern).unwrap();
+/// let gram = to_gram_pattern(&pattern).unwrap();
 /// assert_eq!(gram, "(hello)");
 ///
 /// // Relationship pattern (2 atomic elements)
 /// let pattern = create_relationship("a", "b");
-/// let gram = serialize_pattern(&pattern).unwrap();
+/// let gram = to_gram_pattern(&pattern).unwrap();
 /// assert_eq!(gram, "(a)-->(b)");
 ///
 /// // Subject pattern (multiple elements)
 /// let pattern = create_subject_pattern("team", vec!["alice", "bob"]);
-/// let gram = serialize_pattern(&pattern).unwrap();
+/// let gram = to_gram_pattern(&pattern).unwrap();
 /// assert_eq!(gram, "[team | alice, bob]");
 /// ```
-pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError>;
+pub fn to_gram_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError>;
 ```
 
 ### Collection Serialization
@@ -72,16 +72,16 @@ pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, Serialize
 ///
 /// # Examples
 /// ```
-/// use gram_codec::serialize_patterns;
+/// use gram_codec::to_gram_patterns;
 ///
 /// let patterns = vec![
 ///     Pattern::point(Subject::with_identifier("a")),
 ///     Pattern::point(Subject::with_identifier("b")),
 /// ];
-/// let gram = serialize_patterns(&patterns).unwrap();
+/// let gram = to_gram_patterns(&patterns).unwrap();
 /// assert_eq!(gram, "(a)\n(b)");
 /// ```
-pub fn serialize_patterns(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError>;
+pub fn to_gram_patterns(patterns: &[Pattern<Subject>]) -> Result<String, SerializeError>;
 ```
 
 ### Serialization with Options (Future Extension)
@@ -361,12 +361,12 @@ gram_codec = { path = ".", features = ["parser"] }  # For round-trip tests
 ## Example Usage
 
 ```rust
-use gram_codec::serialize_pattern;
+use gram_codec::to_gram_pattern;
 use pattern_core::Pattern;
 
 // Serialize a simple pattern
 let pattern = Pattern::point(Subject::with_identifier("hello"));
-let gram = serialize_pattern(&pattern)?;
+let gram = to_gram_pattern(&pattern)?;
 println!("{}", gram);  // Output: (hello)
 
 // Validate output

@@ -2,7 +2,7 @@
 //!
 //! Run with: `cargo run --package gram-codec --example advanced_usage`
 
-use gram_codec::{parse_gram_notation, serialize_pattern};
+use gram_codec::{parse_gram_notation, to_gram_pattern};
 use pattern_core::{Pattern, Subject, Symbol};
 use std::collections::{HashMap, HashSet};
 
@@ -71,7 +71,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     let pattern = Pattern::point(subject);
-    let gram_output = serialize_pattern(&pattern)?;
+    let gram_output = to_gram_pattern(&pattern)?;
     println!("   Serialized with mixed types:");
     println!("   {}\n", gram_output);
 
@@ -142,7 +142,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         vec![alice, bob],
     );
 
-    let gram_output = serialize_pattern(&relationship)?;
+    let gram_output = to_gram_pattern(&relationship)?;
     println!("   Built relationship: {}\n", gram_output);
 
     // Example 9: Comments and whitespace

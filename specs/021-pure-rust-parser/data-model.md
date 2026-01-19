@@ -597,7 +597,7 @@ impl CorpusTest {
             .map_err(|e| format!("First parse failed: {}", e))?;
         
         // Serialize
-        let serialized = serialize_patterns(&patterns1)
+        let serialized = to_gram(&patterns1)
             .map_err(|e| format!("Serialization failed: {}", e))?;
         
         // Second parse

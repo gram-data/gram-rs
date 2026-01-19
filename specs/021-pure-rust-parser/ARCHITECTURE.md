@@ -87,7 +87,7 @@ The gram-data ecosystem consists of **multiple independent projects** with clear
 // Rust API
 pub fn parse_to_ast(input: &str) -> Result<AstPattern, ParseError>
 pub fn parse_gram(input: &str) -> Result<Vec<Pattern<Subject>>, ParseError>
-pub fn serialize_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError>
+pub fn to_gram_pattern(pattern: &Pattern<Subject>) -> Result<String, SerializeError>
 ```
 
 ```javascript

@@ -193,7 +193,7 @@ let original = "(a:Label {key: \"value\"})";
 let patterns1 = parse_gram(original).unwrap();
 
 // Serialize
-let serialized = serialize_patterns(&patterns1).unwrap();
+let serialized = to_gram(&patterns1).unwrap();
 
 // Second parse
 let patterns2 = parse_gram(&serialized).unwrap();
@@ -305,7 +305,7 @@ mod proptests {
         #[test]
         fn round_trip_preserves_structure(s in "\\([a-z]+\\)") {
             if let Ok(patterns) = parse_gram(&s) {
-                let serialized = serialize_patterns(&patterns).unwrap();
+                let serialized = to_gram(&patterns).unwrap();
                 let re_parsed = parse_gram(&serialized).unwrap();
                 prop_assert_eq!(patterns, re_parsed);
             }

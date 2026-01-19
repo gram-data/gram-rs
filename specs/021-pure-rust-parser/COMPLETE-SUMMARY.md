@@ -49,10 +49,10 @@
 
 ### 1. Rust (Native) ✅
 ```rust
-use gram_codec::{parse_gram, serialize_pattern};
+use gram_codec::{parse_gram, to_gram_pattern};
 
 let patterns = parse_gram("(alice)-[:KNOWS]->(bob)")?;
-let serialized = serialize_pattern(&patterns[0])?;
+let serialized = to_gram_pattern(&patterns[0])?;
 ```
 
 **Performance**: Native speed (100%)
@@ -315,7 +315,7 @@ result = gram_codec.parse_gram("(hello)")
 ### Rust Developers
 ```rust
 // Native applications
-use gram_codec::{parse_gram, serialize_pattern};
+use gram_codec::{parse_gram, to_gram_pattern};
 let patterns = parse_gram("(hello)")?;
 ```
 
