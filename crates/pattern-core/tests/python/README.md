@@ -54,7 +54,7 @@ Build and install the pattern-core Python extension in development mode:
 
 ```bash
 cd /Users/akollegger/Developer/gram-data/gram-rs/crates/pattern-core
-maturin develop --features python
+maturin develop --uv --features python
 ```
 
 This will compile the Rust code and install the `pattern_core` module in your current Python environment.
@@ -122,7 +122,7 @@ pytest tests/python/ -v
 If you get `ModuleNotFoundError: No module named 'pattern_core'`, make sure you've run:
 
 ```bash
-maturin develop --features python
+maturin develop --uv --features python
 ```
 
 ### Build errors
@@ -171,7 +171,7 @@ cargo test --package pattern-core --lib
   working-directory: crates/pattern-core
   run: |
     source .venv/bin/activate
-    maturin develop --features python
+    maturin develop --uv --features python
 
 - name: Run Python tests
   working-directory: crates/pattern-core
@@ -194,7 +194,7 @@ cargo test --package pattern-core --lib
 
 - name: Build Python extension
   working-directory: crates/pattern-core
-  run: maturin develop --features python
+  run: maturin develop --uv --features python
 
 - name: Run Python tests
   run: pytest crates/pattern-core/tests/python/ -v --cov

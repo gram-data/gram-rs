@@ -207,7 +207,7 @@ fn value_map_to_python_dict(py: Python, map: &HashMap<String, Value>) -> PyResul
 /// Supports standard types (string, int, decimal, boolean, symbol) and extended types
 /// (tagged string, array, map, range, measurement).
 #[cfg(feature = "python")]
-#[pyclass]
+#[pyclass(name = "Value")]
 #[derive(Clone)]
 pub struct PyValue {
     value: Value,
@@ -352,7 +352,8 @@ impl PyValue {
     fn as_string(&self) -> PyResult<String> {
         match &self.value {
             Value::VString(s) => Ok(s.clone()),
-            _ => Err(type_error_to_python("Value is not a string")),
+            Value::VSymbol(s) => Ok(s.clone()),
+            _ => Err(type_error_to_python("Value is not a string or symbol")),
         }
     }
 
@@ -420,7 +421,7 @@ impl PyValue {
 /// Subject is a self-descriptive value type with identity, labels, and properties.
 /// Designed to be used as the value type in Pattern<Subject>.
 #[cfg(feature = "python")]
-#[pyclass]
+#[pyclass(name = "Subject")]
 #[derive(Clone)]
 pub struct PySubject {
     subject: Subject,
@@ -623,7 +624,7 @@ fn to_rust_pattern(pattern: &PyPattern) -> Pattern<String> {
 /// Pattern is a recursive, nested structure (s-expression-like) that can hold any value type.
 /// For MVP, values are stored as strings (simplified implementation).
 #[cfg(feature = "python")]
-#[pyclass]
+#[pyclass(name = "Pattern")]
 #[derive(Clone)]
 pub struct PyPattern {
     value: String,  // Serialized value (simplified for MVP)
@@ -878,6 +879,85 @@ impl PyPattern {
         })
     }
 
+    /// Create patterns by combining three lists pointwise.
+    ///
+    /// Takes three lists and combines them element-wise to create relationship patterns.
+    /// Each resulting pattern has value from the values list and elements [left, right].
+    ///
+    /// Args:
+    ///     left (List[Pattern]): First list of patterns (e.g., source nodes)
+    ///     right (List[Pattern]): Second list of patterns (e.g., target nodes)
+    ///     values (List[Any]): List of values for the new patterns
+    ///
+    /// Returns:
+    ///     List[Pattern]: List of patterns with structure [value, [left, right]]
+    ///
+    /// Example:
+    ///     >>> sources = [Pattern.point("Alice"), Pattern.point("Bob")]
+    ///     >>> targets = [Pattern.point("Company"), Pattern.point("Project")]
+    ///     >>> rel_types = ["WORKS_FOR", "MANAGES"]
+    ///     >>> relationships = Pattern.zip3(sources, targets, rel_types)
+    #[staticmethod]
+    fn zip3(
+        _py: Python,
+        left: Vec<PyPattern>,
+        right: Vec<PyPattern>,
+        values: &Bound<'_, PyList>,
+    ) -> PyResult<Vec<PyPattern>> {
+        let mut results = Vec::new();
+        
+        for ((l, r), val) in left.into_iter().zip(right).zip(values.iter()) {
+            let value = val.str()?.to_string();
+            results.push(PyPattern {
+                value,
+                elements: vec![l, r],
+            });
+        }
+        
+        Ok(results)
+    }
+
+    /// Create patterns by applying a function to pairs from two lists.
+    ///
+    /// Takes two lists of patterns and applies a function to each pair to compute
+    /// the value for the resulting pattern.
+    ///
+    /// Args:
+    ///     left (List[Pattern]): First list of patterns (e.g., source nodes)
+    ///     right (List[Pattern]): Second list of patterns (e.g., target nodes)
+    ///     value_fn (Callable[[Pattern, Pattern], Any]): Function to compute value
+    ///
+    /// Returns:
+    ///     List[Pattern]: List of patterns with computed values
+    ///
+    /// Example:
+    ///     >>> people = [Pattern.point("Alice"), Pattern.point("Bob")]
+    ///     >>> companies = [Pattern.point("TechCorp"), Pattern.point("StartupInc")]
+    ///     >>> relationships = Pattern.zip_with(people, companies,
+    ///     ...     lambda p, c: f"{p.value}_WORKS_AT_{c.value}")
+    #[staticmethod]
+    fn zip_with(
+        py: Python,
+        left: Vec<PyPattern>,
+        right: Vec<PyPattern>,
+        value_fn: &Bound<'_, PyAny>,
+    ) -> PyResult<Vec<PyPattern>> {
+        let mut results = Vec::new();
+        
+        for (l, r) in left.iter().zip(right.iter()) {
+            // Call Python function with pattern references
+            let value_obj = value_fn.call1((l.clone(), r.clone()))?;
+            let value = value_obj.str()?.to_string();
+            
+            results.push(PyPattern {
+                value,
+                elements: vec![l.clone(), r.clone()],
+            });
+        }
+        
+        Ok(results)
+    }
+
     /// Extract value at current position (comonad).
     fn extract(&self) -> String {
         self.value.clone()
@@ -976,7 +1056,7 @@ impl PyPattern {
 ///
 /// Specialized Pattern class for Pattern<Subject> with Subject-specific operations.
 #[cfg(feature = "python")]
-#[pyclass]
+#[pyclass(name = "PatternSubject")]
 #[derive(Clone)]
 pub struct PyPatternSubject {
     pattern: Pattern<Subject>,
@@ -1381,7 +1461,7 @@ impl PyPatternSubject {
 
 /// Python wrapper for ValidationRules
 #[cfg(feature = "python")]
-#[pyclass]
+#[pyclass(name = "ValidationRules")]
 #[derive(Clone)]
 pub struct PyValidationRules {
     rules: ValidationRules,
@@ -1428,7 +1508,7 @@ impl PyValidationRules {
 
 /// Python exception for validation errors
 #[cfg(feature = "python")]
-#[pyclass(extends = PyValueError)]
+#[pyclass(name = "ValidationError", extends = PyValueError)]
 pub struct PyValidationError {
     message: String,
     rule: String,
@@ -1460,7 +1540,7 @@ impl PyValidationError {
 
 /// Python wrapper for StructureAnalysis
 #[cfg(feature = "python")]
-#[pyclass]
+#[pyclass(name = "StructureAnalysis")]
 #[derive(Clone)]
 pub struct PyStructureAnalysis {
     analysis: StructureAnalysis,

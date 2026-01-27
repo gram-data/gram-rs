@@ -24,7 +24,7 @@ pip install maturin
 
 # Build and install
 cd crates/pattern-core
-maturin develop --features python
+maturin develop --uv --features python
 ```
 
 ## Quick Examples
