@@ -433,6 +433,44 @@ impl<V> Pattern<V> {
 - [x] Document Pattern's "decorated sequence" semantics - **Complete**
 - [x] Add examples showing position-aware decorations - **Complete**
 
+### 024-python-pattern-core: Python Bindings for Pattern-Core ✅ COMPLETE
+**Feature Spec**: `specs/024-python-pattern-core/spec.md` - Implementation-agnostic specification
+**Implementation Plan**: `specs/024-python-pattern-core/plan.md` - Implementation plan and design decisions
+**Tasks**: `specs/024-python-pattern-core/tasks.md` - 100 detailed implementation tasks (all complete)
+
+**Status**: ✅ COMPLETE - Implementation finished 2026-01-27. Python bindings provide full access to pattern-core functionality.
+
+- [x] Complete Python bindings using PyO3 for pattern-core Rust crate
+- [x] User Story 1: Construct Patterns Programmatically (Pattern.point, Pattern.of, Pattern.pattern, Pattern.from_values, Subject, PatternSubject)
+- [x] User Story 2: Perform Pattern Operations (map, filter, fold, combine, extract, extend, all inspection/query methods)
+- [x] User Story 3: Type-Safe Python Development (complete type stubs, mypy/pyright support, IDE autocomplete)
+- [x] Comprehensive documentation (docs/python-usage.md, examples/pattern-core-python/README.md)
+- [x] 5 example files: basic_usage.py, operations.py, type_safety.py, advanced.py, zip_relationships.py
+- [x] 94 Python integration tests (100% pass rate)
+- [x] Performance tests verify <2x overhead vs native Rust for patterns with 1000 nodes
+- [x] Maturin-based build system for Python wheel distribution
+- [x] Platform support: Python 3.8+, macOS/Linux/Windows
+
+**Documentation & Examples**:
+- API reference: `docs/python-usage.md`
+- Quickstart: `examples/pattern-core-python/README.md`
+- Construction examples: `examples/pattern-core-python/basic_usage.py` (10 examples)
+- Operations examples: `examples/pattern-core-python/operations.py` (12 examples)
+- Type safety examples: `examples/pattern-core-python/type_safety.py` (10 examples)
+- Advanced examples: `examples/pattern-core-python/advanced.py` (12 examples)
+
+**Testing**:
+- 94 Python tests in `crates/pattern-core/tests/python/`
+- Test coverage: construction, operations, type safety, edge cases, integration, performance
+- All user stories independently testable
+- Performance validation: Python bindings maintain <2x overhead vs native Rust
+
+**API Changes**:
+- **Breaking**: Removed `Pattern.from_list(value, values)` (confusing signature)
+- Added `Pattern.from_values(values) -> List[Pattern]` (clear, single-purpose)
+- Added `Pattern.of(value)` as alias for `Pattern.point()` (FP convention)
+- See `crates/pattern-core/API-CHANGES.md` for migration guide
+
 ---
 
 ## Phase 4: Gram Notation Serialization

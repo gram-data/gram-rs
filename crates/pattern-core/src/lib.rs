@@ -346,18 +346,17 @@ impl Combinable for () {
 /// ```
 impl Combinable for Subject {
     fn combine(self, other: Self) -> Self {
-        use std::collections::HashMap;
-        
+
         // Keep first identity (leftmost in associative chain)
         let identity = self.identity;
-        
+
         // Union of labels (set union is associative)
         let labels = self.labels.union(&other.labels).cloned().collect();
-        
+
         // Merge properties (right overwrites left)
         let mut properties = self.properties;
         properties.extend(other.properties);
-        
+
         Subject {
             identity,
             labels,
@@ -403,7 +402,7 @@ pub struct FirstSubject(pub Subject);
 
 impl Combinable for FirstSubject {
     fn combine(self, _other: Self) -> Self {
-        self  // Always return first, discard second
+        self // Always return first, discard second
     }
 }
 
@@ -444,7 +443,7 @@ pub struct LastSubject(pub Subject);
 
 impl Combinable for LastSubject {
     fn combine(self, other: Self) -> Self {
-        other  // Always return second, discard first
+        other // Always return second, discard first
     }
 }
 
@@ -519,7 +518,7 @@ impl Default for EmptySubject {
 mod tests {
     use super::*;
     use std::collections::{HashMap, HashSet};
-    
+
     #[test]
     fn subject_merge_combines_labels_and_properties() {
         let s1 = Subject {
@@ -535,7 +534,7 @@ mod tests {
                 m
             },
         };
-        
+
         let s2 = Subject {
             identity: Symbol("n2".to_string()),
             labels: {
@@ -549,16 +548,16 @@ mod tests {
                 m
             },
         };
-        
+
         let merged = s1.combine(s2);
-        
+
         assert_eq!(merged.identity.0, "n1");
         assert_eq!(merged.labels.len(), 2);
         assert!(merged.labels.contains("Person"));
         assert!(merged.labels.contains("Employee"));
         assert_eq!(merged.properties.len(), 2);
     }
-    
+
     #[test]
     fn subject_merge_is_associative() {
         let s1 = Subject {
@@ -570,7 +569,7 @@ mod tests {
             },
             properties: HashMap::new(),
         };
-        
+
         let s2 = Subject {
             identity: Symbol("b".to_string()),
             labels: {
@@ -580,7 +579,7 @@ mod tests {
             },
             properties: HashMap::new(),
         };
-        
+
         let s3 = Subject {
             identity: Symbol("c".to_string()),
             labels: {
@@ -590,17 +589,17 @@ mod tests {
             },
             properties: HashMap::new(),
         };
-        
+
         // (s1 + s2) + s3
         let left = s1.clone().combine(s2.clone()).combine(s3.clone());
-        
+
         // s1 + (s2 + s3)
         let right = s1.combine(s2.combine(s3));
-        
+
         assert_eq!(left.identity, right.identity);
         assert_eq!(left.labels, right.labels);
     }
-    
+
     #[test]
     fn first_subject_keeps_first() {
         let s1 = FirstSubject(Subject {
@@ -608,17 +607,17 @@ mod tests {
             labels: HashSet::new(),
             properties: HashMap::new(),
         });
-        
+
         let s2 = FirstSubject(Subject {
             identity: Symbol("bob".to_string()),
             labels: HashSet::new(),
             properties: HashMap::new(),
         });
-        
+
         let result = s1.clone().combine(s2);
         assert_eq!(result.0.identity.0, "alice");
     }
-    
+
     #[test]
     fn last_subject_keeps_last() {
         let s1 = LastSubject(Subject {
@@ -626,17 +625,17 @@ mod tests {
             labels: HashSet::new(),
             properties: HashMap::new(),
         });
-        
+
         let s2 = LastSubject(Subject {
             identity: Symbol("bob".to_string()),
             labels: HashSet::new(),
             properties: HashMap::new(),
         });
-        
+
         let result = s1.combine(s2.clone());
         assert_eq!(result.0.identity.0, "bob");
     }
-    
+
     #[test]
     fn empty_subject_returns_anonymous() {
         let s1 = EmptySubject(Subject {
@@ -648,19 +647,19 @@ mod tests {
             },
             properties: HashMap::new(),
         });
-        
+
         let s2 = EmptySubject(Subject {
             identity: Symbol("bob".to_string()),
             labels: HashSet::new(),
             properties: HashMap::new(),
         });
-        
+
         let result = s1.combine(s2);
         assert_eq!(result.0.identity.0, "_");
         assert!(result.0.labels.is_empty());
         assert!(result.0.properties.is_empty());
     }
-    
+
     #[test]
     fn empty_subject_is_identity() {
         let empty = EmptySubject::default();

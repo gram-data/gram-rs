@@ -55,7 +55,7 @@ def test_pattern_queries():
     
     # filter - find patterns with value length > 4
     filtered = pattern.filter(lambda p: len(p.value) > 4)
-    assert len(filtered) == 2  # "hello" and "world"
+    assert len(filtered) == 3  # "hello", "world", and "python"
     
     # find_first - find first pattern with value starting with "w"
     found = pattern.find_first(lambda p: p.value.startswith("w"))
@@ -136,28 +136,28 @@ def test_pattern_comonad():
     # extract - get value at current position
     assert pattern.extract() == "root"
     
-    # extend - decorate with depth (returns integers as strings)
-    depths = pattern.extend(lambda p: str(p.depth()))
-    assert depths.value == "2"  # root depth
-    assert depths.elements[0].value == "1"  # "a" depth
-    assert depths.elements[1].value == "0"  # "b" depth
+    # extend - decorate with depth (returns integers, not strings)
+    depths = pattern.extend(lambda p: p.depth())
+    assert depths.value == 2  # root depth
+    assert depths.elements[0].value == 1  # "a" depth
+    assert depths.elements[1].value == 0  # "b" depth
     
-    # depth_at - helper for depth decoration (returns integers as strings)
+    # depth_at - helper for depth decoration (returns integers, not strings)
     depths2 = pattern.depth_at()
-    assert depths2.value == "2"
-    assert depths2.elements[0].value == "1"
+    assert depths2.value == 2
+    assert depths2.elements[0].value == 1
     
-    # size_at - decorate with subtree size (returns integers as strings)
+    # size_at - decorate with subtree size (returns integers, not strings)
     sizes = pattern.size_at()
-    assert sizes.value == "4"  # root + a + x + b
-    assert sizes.elements[0].value == "2"  # a + x
-    assert sizes.elements[1].value == "1"  # b
+    assert sizes.value == 4  # root + a + x + b
+    assert sizes.elements[0].value == 2  # a + x
+    assert sizes.elements[1].value == 1  # b
     
-    # indices_at - decorate with path from root (returns string representation)
+    # indices_at - decorate with path from root (returns list, not string)
     indices = pattern.indices_at()
-    assert indices.value == "[]"  # root path
-    assert indices.elements[0].value == "[0]"  # "a" path
-    assert indices.elements[1].value == "[1]"  # "b" path
+    assert indices.value == []  # root path is empty list
+    assert indices.elements[0].value == [0]  # "a" path
+    assert indices.elements[1].value == [1]  # "b" path
 
 
 def test_pattern_subject_operations():
