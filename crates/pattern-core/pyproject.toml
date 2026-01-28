@@ -3,13 +3,13 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "gram-codec"
+name = "pattern-core"
 version = "0.1.0"
-description = "Gram notation parser and serializer"
+description = "Core pattern data structures for Python"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "Apache-2.0"}
-keywords = ["gram", "graph", "parser", "codec"]
+keywords = ["pattern", "data-structure", "graph", "functional"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -36,4 +36,4 @@ dev = [
 
 [tool.maturin]
 features = ["python"]
-module-name = "gram_codec"
+module-name = "pattern_core"

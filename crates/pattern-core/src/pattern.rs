@@ -2737,6 +2737,126 @@ impl<V: crate::Combinable> Pattern<V> {
             elements: combined_elements,
         }
     }
+
+    /// Creates patterns by combining three lists pointwise (zipWith3).
+    ///
+    /// Takes three lists of equal length and combines them element-wise to create
+    /// new patterns. Each resulting pattern has:
+    /// - **value**: From the `values` list
+    /// - **elements**: A pair `[left, right]` from the corresponding positions
+    ///
+    /// This is useful for creating relationship patterns from separate lists of
+    /// source nodes, target nodes, and relationship values.
+    ///
+    /// # Arguments
+    ///
+    /// * `left` - First list of patterns (e.g., source nodes)
+    /// * `right` - Second list of patterns (e.g., target nodes)
+    /// * `values` - List of values for the new patterns (e.g., relationship types)
+    ///
+    /// # Returns
+    ///
+    /// A vector of patterns where each pattern has value from `values` and
+    /// elements `[left[i], right[i]]`.
+    ///
+    /// # Behavior
+    ///
+    /// - Stops at the length of the shortest input list
+    /// - Consumes all three input vectors
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use pattern_core::Pattern;
+    ///
+    /// // Create relationship patterns
+    /// let sources = vec![
+    ///     Pattern::point("Alice".to_string()),
+    ///     Pattern::point("Bob".to_string()),
+    /// ];
+    /// let targets = vec![
+    ///     Pattern::point("Company".to_string()),
+    ///     Pattern::point("Project".to_string()),
+    /// ];
+    /// let rel_types = vec!["WORKS_FOR".to_string(), "MANAGES".to_string()];
+    ///
+    /// let relationships = Pattern::zip3(sources, targets, rel_types);
+    ///
+    /// assert_eq!(relationships.len(), 2);
+    /// assert_eq!(relationships[0].value, "WORKS_FOR");
+    /// assert_eq!(relationships[0].elements.len(), 2);
+    /// ```
+    pub fn zip3(left: Vec<Pattern<V>>, right: Vec<Pattern<V>>, values: Vec<V>) -> Vec<Pattern<V>> {
+        left.into_iter()
+            .zip(right)
+            .zip(values)
+            .map(|((l, r), v)| Pattern::pattern(v, vec![l, r]))
+            .collect()
+    }
+
+    /// Creates patterns by applying a function to pairs from two lists (zipWith2).
+    ///
+    /// Takes two lists of patterns and applies a function to each pair to compute
+    /// the value for the resulting pattern. Each resulting pattern has:
+    /// - **value**: Computed by applying `value_fn` to the pair
+    /// - **elements**: A pair `[left, right]` from the corresponding positions
+    ///
+    /// This is useful when relationship values are derived from the patterns being
+    /// connected, rather than from a pre-computed list.
+    ///
+    /// # Arguments
+    ///
+    /// * `left` - First list of patterns (e.g., source nodes)
+    /// * `right` - Second list of patterns (e.g., target nodes)
+    /// * `value_fn` - Function that computes the value from each pair
+    ///
+    /// # Returns
+    ///
+    /// A vector of patterns where each pattern has value computed by `value_fn`
+    /// and elements `[left[i], right[i]]`.
+    ///
+    /// # Behavior
+    ///
+    /// - Stops at the length of the shortest input list
+    /// - Borrows patterns (uses references) to allow inspection without consuming
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use pattern_core::Pattern;
+    ///
+    /// let people = vec![
+    ///     Pattern::point("Alice".to_string()),
+    ///     Pattern::point("Bob".to_string()),
+    /// ];
+    /// let companies = vec![
+    ///     Pattern::point("TechCorp".to_string()),
+    ///     Pattern::point("StartupInc".to_string()),
+    /// ];
+    ///
+    /// // Derive relationship type from patterns
+    /// let relationships = Pattern::zip_with(people, companies, |person, company| {
+    ///     format!("{}_WORKS_AT_{}", person.value, company.value)
+    /// });
+    ///
+    /// assert_eq!(relationships[0].value, "Alice_WORKS_AT_TechCorp");
+    /// ```
+    pub fn zip_with<F>(
+        left: Vec<Pattern<V>>,
+        right: Vec<Pattern<V>>,
+        value_fn: F,
+    ) -> Vec<Pattern<V>>
+    where
+        F: Fn(&Pattern<V>, &Pattern<V>) -> V,
+    {
+        left.into_iter()
+            .zip(right)
+            .map(|(l, r)| {
+                let value = value_fn(&l, &r);
+                Pattern::pattern(value, vec![l, r])
+            })
+            .collect()
+    }
 }
 
 // ============================================================================
