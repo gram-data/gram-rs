@@ -50,3 +50,38 @@ const rendered = await pipe(
 ```
 
 Use `Option.getOrUndefined()` for lookups and `Equal.equals()` for structural equality.
+
+## JSON Interchange
+
+`Pattern<Subject>` can be serialized to and from a plain JSON-compatible format defined by the [gram interchange schema](https://github.com/gram-data/tree-sitter-gram/blob/main/docs/pattern.schema.json). This is useful when you need to pass patterns across a network boundary — for example, from a Next.js server component (where WASM is available) to a client component (where it is not).
+
+**Producer** (has WASM, e.g. a server):
+
+```typescript
+import { Gram } from "@relateby/gram"
+
+// Parse gram and return the raw interchange objects directly —
+// no Pattern<Subject> construction overhead, ready for JSON.stringify.
+const raw = await Gram.parseRaw("(alice:Person)-[:KNOWS]->(bob:Person)")
+res.json(raw)
+```
+
+**Consumer** (no WASM needed, e.g. a browser client):
+
+```typescript
+import { patternFromRaw, validatePayload } from "@relateby/pattern"
+
+// Validate the incoming payload shape and reconstruct native patterns.
+const patterns = validatePayload(data).map(patternFromRaw)
+```
+
+**Round-trip** (native ↔ JSON):
+
+```typescript
+import { patternFromRaw, patternToRaw } from "@relateby/pattern"
+
+const raw = patternToRaw(pattern)          // Pattern<Subject> → RawPattern
+const restored = patternFromRaw(raw)       // RawPattern → Pattern<Subject>
+```
+
+The `RawPattern` and `RawSubject` types are exported for use in TypeScript type annotations.

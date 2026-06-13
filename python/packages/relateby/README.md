@@ -60,6 +60,41 @@ assert gram_validate("(alice:Person)") == []
 assert round_trip("(alice:Person)") == "(alice:Person)"
 ```
 
+## JSON Interchange
+
+`Pattern<Subject>` can be serialized to and from a plain JSON-compatible format defined by the [gram interchange schema](https://github.com/gram-data/tree-sitter-gram/blob/main/docs/pattern.schema.json). This is useful when you need to pass patterns across a process or network boundary without re-parsing gram notation on the other side.
+
+**Producer** (parse gram → emit raw JSON):
+
+```python
+from relateby.gram import parse_raw
+import json
+
+raw = parse_raw("(alice:Person)-[:KNOWS]->(bob:Person)")
+payload = json.dumps(raw)
+```
+
+**Consumer** (receive raw JSON → reconstruct patterns):
+
+```python
+from relateby.pattern import pattern_from_dict, validate_payload
+import json
+
+raw = json.loads(payload)
+patterns = [pattern_from_dict(item) for item in validate_payload(raw)]
+```
+
+**Round-trip** (native ↔ JSON):
+
+```python
+from relateby.pattern import pattern_from_dict, pattern_to_dict
+
+raw = pattern_to_dict(pattern)        # Pattern[Subject] → RawPattern dict
+restored = pattern_from_dict(raw)     # RawPattern dict → Pattern[Subject]
+```
+
+`RawPattern` and `RawSubject` are `TypedDict` types exported from `relateby.pattern` for use in type annotations.
+
 ## Building from source
 
 From the repository root, build the wheel from the combined package directory (requires maturin and Rust; Python 3.8–3.13 for the extension build):
