@@ -21,7 +21,7 @@ from ._value import (
     value_from_dict,
     value_to_dict,
 )
-from ._decode import pattern_from_dict
+from ._decode import RawPattern, RawSubject, pattern_from_dict, pattern_to_dict, validate_payload
 from ._standard_graph import StandardGraph
 from ._graph_transforms import (
     GraphQuery,
@@ -51,7 +51,11 @@ __all__ = [
     "MeasurementVal",
     "value_from_dict",
     "value_to_dict",
+    "RawPattern",
+    "RawSubject",
     "pattern_from_dict",
+    "pattern_to_dict",
+    "validate_payload",
     "StandardGraph",
     "unfold",
     "GraphQuery",
