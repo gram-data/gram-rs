@@ -8,7 +8,7 @@
 #
 # Usage:
 #   ./tests/interop/run.sh
-#   ./tests/interop/run.sh --fixture path/to/other.gram
+#   ./tests/interop/run.sh path/to/other.gram
 
 set -euo pipefail
 
@@ -86,4 +86,6 @@ fi
 
 if $PASS; then
   echo "PASS: Rust, TypeScript, and Python all agree on the interchange format"
+else
+  exit 1
 fi

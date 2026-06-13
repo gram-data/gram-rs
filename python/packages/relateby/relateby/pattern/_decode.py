@@ -64,6 +64,16 @@ def validate_payload(raw: object) -> list[RawPattern]:
             raise TypeError(
                 f"Invalid pattern payload: item {i} must have 'subject' and 'elements' keys"
             )
+        subject = item["subject"]
+        if not isinstance(subject, dict):
+            raise TypeError(f"Invalid pattern payload: item {i} 'subject' must be a dict")
+        for field in ("identity", "labels", "properties"):
+            if field not in subject:
+                raise TypeError(
+                    f"Invalid pattern payload: item {i} 'subject' missing '{field}'"
+                )
+        if not isinstance(item["elements"], list):
+            raise TypeError(f"Invalid pattern payload: item {i} 'elements' must be a list")
     return raw  # type: ignore[return-value]
 
 

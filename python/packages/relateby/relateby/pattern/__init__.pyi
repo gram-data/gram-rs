@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generic, Iterator, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Generic, Iterator, Optional, TypedDict, TypeVar, Union, overload
 
 V = TypeVar("V")
 U = TypeVar("U")
@@ -141,12 +141,12 @@ class Pattern(Generic[V]):
 def value_from_dict(d: object) -> Value: ...
 def value_to_dict(v: Value) -> object: ...
 
-class RawSubject(dict):
+class RawSubject(TypedDict):
     identity: str
     labels: list[str]
     properties: dict[str, Any]
 
-class RawPattern(dict):
+class RawPattern(TypedDict):
     subject: RawSubject
     elements: list[RawPattern]
 

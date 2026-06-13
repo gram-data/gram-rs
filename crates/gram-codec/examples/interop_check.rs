@@ -6,8 +6,10 @@
 //!   cargo run -q -p relateby-gram --example interop_check < tests/interop/quatrain.gram
 
 fn main() {
+    use std::io::BufRead as _;
     let mut input = String::new();
     std::io::stdin()
+        .lock()
         .lines()
         .filter_map(|l| l.ok())
         .filter(|l| !l.trim_start().starts_with("//"))

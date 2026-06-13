@@ -93,5 +93,9 @@ function valueToRaw(v: Value): unknown {
     case "MapVal":          return Object.fromEntries(
       Object.entries(v.entries).map(([k, val]) => [k, valueToRaw(val)])
     )
+    default: {
+      const _exhausted: never = v
+      throw new Error(`Unhandled Value tag: ${(_exhausted as Value)._tag}`)
+    }
   }
 }
