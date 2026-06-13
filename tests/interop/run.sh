@@ -15,12 +15,20 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 FIXTURE="${1:-$REPO_ROOT/tests/interop/quatrain.gram}"
 
-# Prefer the local dev venv; fall back to whatever python3 is on PATH.
+# Prefer the local dev venv when it exists; fall back to system python3.
 VENV_PYTHON="$REPO_ROOT/python/packages/relateby/.venv/bin/python"
-PYTHON="${PYTHON:-${VENV_PYTHON:-python3}}"
+if [[ -x "$VENV_PYTHON" ]]; then
+  PYTHON="${PYTHON:-$VENV_PYTHON}"
+else
+  PYTHON="${PYTHON:-python3}"
+fi
 
-# Ensure the local relateby source is importable (covers pre-wheel dev runs).
-export PYTHONPATH="$REPO_ROOT/python/packages/relateby${PYTHONPATH:+:$PYTHONPATH}"
+# In local dev (no installed wheel), point Python at the source tree so the
+# pure-Python modules are importable. In CI the wheel is installed globally
+# so PYTHONPATH is not needed (and would shadow the native .so files).
+if [[ -z "${CI:-}" ]]; then
+  export PYTHONPATH="$REPO_ROOT/python/packages/relateby${PYTHONPATH:+:$PYTHONPATH}"
+fi
 TMPDIR_LOCAL="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR_LOCAL"' EXIT
 
