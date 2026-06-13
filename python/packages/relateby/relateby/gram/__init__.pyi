@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from relateby.pattern import Pattern
+from relateby.pattern import Pattern, RawPattern
 from relateby.pattern._subject import Subject
 
 
@@ -12,6 +12,7 @@ class GramParseError(Exception):
 
 
 def parse(input: str) -> list[Pattern[Subject]]: ...
+def parse_raw(input: str) -> list[RawPattern]: ...
 def stringify(patterns: list[Pattern[Subject]]) -> str: ...
 def parse_with_header(input: str) -> tuple[dict | None, list[Pattern[Subject]]]: ...
 def stringify_with_header(

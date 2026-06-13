@@ -1,114 +1,16 @@
 //! JSON Schema validation tests for AST output
 //!
-//! Validates that pattern-rs AST output conforms to the canonical JSON format
-//! defined by gram-hs (spec 029-canonical-json-pattern).
+//! Validates that pattern-rs AST output conforms to the canonical JSON format.
+//! Schema source: external/tree-sitter-gram/docs/pattern.schema.json
+//! (gram-data/tree-sitter-gram is the authoritative home for this schema.)
 
 use gram_codec::parse_to_ast;
 use serde_json::Value as JsonValue;
 
-/// Load the canonical JSON schema (corrected version with subject/identity)
+const SCHEMA_JSON: &str = include_str!("fixtures/pattern.schema.json");
+
 fn load_canonical_schema() -> JsonValue {
-    // Note: The static schema file uses old field names (value/symbol)
-    // but the actual schema generator uses subject/identity.
-    // This is the corrected schema matching the actual implementation.
-    serde_json::json!({
-        "$schema": "http://json-schema.org/draft/2020-12/schema#",
-        "$id": "https://gram.data/schemas/pattern/v0.1.0/pattern.json",
-        "title": "Pattern<Subject>",
-        "version": "0.1.0",
-        "definitions": {
-            "Pattern": {
-                "type": "object",
-                "required": ["subject", "elements"],
-                "properties": {
-                    "subject": {"$ref": "#/definitions/Subject"},
-                    "elements": {
-                        "type": "array",
-                        "items": {"$ref": "#/definitions/Pattern"}
-                    }
-                },
-                "additionalProperties": false
-            },
-            "Subject": {
-                "type": "object",
-                "required": ["identity", "labels", "properties"],
-                "properties": {
-                    "identity": {"type": "string"},
-                    "labels": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "uniqueItems": true
-                    },
-                    "properties": {
-                        "type": "object",
-                        "additionalProperties": {"$ref": "#/definitions/Value"}
-                    }
-                },
-                "additionalProperties": false
-            },
-            "Value": {
-                "oneOf": [
-                    {"type": "integer"},
-                    {"type": "number"},
-                    {"type": "boolean"},
-                    {"type": "string"},
-                    {"$ref": "#/definitions/ValueSymbol"},
-                    {"$ref": "#/definitions/ValueTaggedString"},
-                    {"$ref": "#/definitions/ValueRange"},
-                    {"$ref": "#/definitions/ValueMeasurement"},
-                    {
-                        "type": "array",
-                        "items": {"$ref": "#/definitions/Value"}
-                    },
-                    {
-                        "type": "object",
-                        "additionalProperties": {"$ref": "#/definitions/Value"},
-                        "not": {"required": ["type"]}
-                    }
-                ]
-            },
-            "ValueSymbol": {
-                "type": "object",
-                "required": ["type", "value"],
-                "properties": {
-                    "type": {"const": "symbol"},
-                    "value": {"type": "string"}
-                },
-                "additionalProperties": false
-            },
-            "ValueTaggedString": {
-                "type": "object",
-                "required": ["type", "tag", "content"],
-                "properties": {
-                    "type": {"const": "tagged"},
-                    "tag": {"type": "string"},
-                    "content": {"type": "string"}
-                },
-                "additionalProperties": false
-            },
-            "ValueRange": {
-                "type": "object",
-                "required": ["type", "lower", "upper"],
-                "properties": {
-                    "type": {"const": "range"},
-                    "lower": {"type": "number"},
-                    "upper": {"type": "number"}
-                },
-                "additionalProperties": false
-            },
-            "ValueMeasurement": {
-                "type": "object",
-                "required": ["type", "unit", "value"],
-                "properties": {
-                    "type": {"const": "measurement"},
-                    "unit": {"type": "string"},
-                    "value": {"type": "number"}
-                },
-                "additionalProperties": false
-            }
-        },
-        "$ref": "#/definitions/Pattern"
-    })
+    serde_json::from_str(SCHEMA_JSON).expect("pattern.schema.json is valid JSON")
 }
 
 /// Basic structural validation (without full JSON Schema library)

@@ -54,6 +54,10 @@ harness = false
 required-features = []
 
 [[example]]
+name = "interop_check"
+path = "examples/interop_check.rs"
+
+[[example]]
 name = "basic_usage"
 path = "examples/basic_usage.rs"
 

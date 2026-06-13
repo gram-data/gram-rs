@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from relateby.pattern import Pattern
     from relateby.pattern._subject import Subject
+    from relateby.pattern._decode import RawPattern
 
 
 class GramParseError(Exception):
@@ -46,18 +47,6 @@ class GramParseError(Exception):
     def cause(self) -> str:
         """Human-readable description of what went wrong."""
         return self._cause
-
-
-def _pattern_to_dict(p: "Pattern[Subject]") -> dict:
-    from relateby.pattern._value import value_to_dict
-    return {
-        "subject": {
-            "identity": p.value.identity,
-            "labels": sorted(p.value.labels),
-            "properties": {k: value_to_dict(v) for k, v in p.value.properties.items()},
-        },
-        "elements": [_pattern_to_dict(e) for e in p.elements],
-    }
 
 
 def parse(input: str) -> "list[Pattern[Subject]]":
@@ -121,9 +110,10 @@ def stringify(patterns: "list[Pattern[Subject]]") -> str:
         assert parse(gram) == parse("(a)-->(b)")
     """
     from relateby._native import gram_codec as _gram
+    from relateby.pattern._decode import pattern_to_dict
 
     try:
-        raw = [_pattern_to_dict(p) for p in patterns]
+        raw = [pattern_to_dict(p) for p in patterns]
         return _gram.stringify(raw)
     except Exception as exc:
         raise GramParseError(input="", cause=str(exc)) from exc
@@ -221,11 +211,12 @@ def stringify_with_header(
         assert header2 == {"version": 1}
     """
     from relateby._native import gram_codec as _gram
+    from relateby.pattern._decode import pattern_to_dict
 
     try:
         raw = {
             "header": header,
-            "patterns": [_pattern_to_dict(p) for p in patterns],
+            "patterns": [pattern_to_dict(p) for p in patterns],
         }
         return _gram.stringify_with_header(raw)
     except Exception as exc:
@@ -253,6 +244,44 @@ def round_trip(input: str) -> str:
         raise GramParseError(input=input, cause=str(exc)) from exc
 
 
+def parse_raw(input: str) -> "list[RawPattern]":
+    """Parse gram notation and return the raw JSON interchange dicts.
+
+    Returns the intermediate representation without constructing native
+    ``Pattern[Subject]`` objects. Use this to produce a JSON-serializable
+    payload for transport (e.g. server → client), then reconstruct on the
+    receiving side with :func:`relateby.pattern.pattern_from_dict`.
+
+    Args:
+        input: Gram notation string.
+
+    Returns:
+        List of raw interchange dicts, one per top-level gram element.
+
+    Raises:
+        GramParseError: If *input* is not valid gram notation.
+
+    Example::
+
+        import json
+        from relateby.gram import parse_raw
+        from relateby.pattern import pattern_from_dict, validate_payload
+
+        # Producer (has native gram support)
+        payload = json.dumps(parse_raw("(alice:Person)-[:KNOWS]->(bob:Person)"))
+
+        # Consumer (no native dependency needed)
+        data = json.loads(payload)
+        patterns = [pattern_from_dict(d) for d in validate_payload(data)]
+    """
+    from relateby._native import gram_codec as _gram
+
+    try:
+        return _gram.parse(input)
+    except Exception as exc:
+        raise GramParseError(input=input, cause=str(exc)) from exc
+
+
 # Legacy aliases
 parse_gram = parse
 gram_stringify = stringify
@@ -261,6 +290,7 @@ gram_stringify = stringify
 __all__ = [
     "GramParseError",
     "parse",
+    "parse_raw",
     "stringify",
     "parse_with_header",
     "stringify_with_header",

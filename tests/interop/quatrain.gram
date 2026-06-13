@@ -1,0 +1,6 @@
+[scarborough:Quatrain { author: "Simon & Garfunkel" } |
+    [:A { line: "Are you going to Scarborough Fair?" }],
+    [:B { line: "Parsley, sage, rosemary, and thyme" }],
+    [:A { line: "Remember me to one who lives there" }],
+    [:B { line: "For once she was a true love of mine" }]
+]

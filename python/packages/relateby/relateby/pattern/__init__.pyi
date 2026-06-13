@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generic, Iterator, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Generic, Iterator, Optional, TypedDict, TypeVar, Union, overload
 
 V = TypeVar("V")
 U = TypeVar("U")
@@ -140,7 +140,19 @@ class Pattern(Generic[V]):
 
 def value_from_dict(d: object) -> Value: ...
 def value_to_dict(v: Value) -> object: ...
-def pattern_from_dict(d: dict[str, Any]) -> Pattern[Subject]: ...
+
+class RawSubject(TypedDict):
+    identity: str
+    labels: list[str]
+    properties: dict[str, Any]
+
+class RawPattern(TypedDict):
+    subject: RawSubject
+    elements: list[RawPattern]
+
+def validate_payload(raw: object) -> list[RawPattern]: ...
+def pattern_from_dict(d: RawPattern) -> Pattern[Subject]: ...
+def pattern_to_dict(p: Pattern[Subject]) -> RawPattern: ...
 def unfold(expand: Callable[[A], tuple[V, list[A]]], seed: A) -> Pattern[V]: ...
 
 Substitution = Union[str, tuple[str, Pattern[Subject]]]

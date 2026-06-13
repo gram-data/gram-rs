@@ -34,8 +34,15 @@ describe("@relateby/pattern public export inventory", () => {
   it("keeps the package-level Gram facade callable", () => {
     expect(PublicApi.Gram).toBeDefined()
     expect(typeof PublicApi.Gram.parse).toBe("function")
+    expect(typeof PublicApi.Gram.parseRaw).toBe("function")
     expect(typeof PublicApi.Gram.stringify).toBe("function")
     expect(typeof PublicApi.Gram.validate).toBe("function")
+  })
+
+  it("exposes JSON interchange codec functions", () => {
+    expect(typeof PublicApi.patternFromRaw).toBe("function")
+    expect(typeof PublicApi.patternToRaw).toBe("function")
+    expect(typeof PublicApi.validatePayload).toBe("function")
   })
 
   it("exposes Pattern.pattern and Pattern.fromList static constructors", () => {
