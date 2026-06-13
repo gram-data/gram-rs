@@ -2,7 +2,6 @@
 // TypeScript interop check: read gram from stdin, write JSON interchange to stdout.
 // Used by tests/interop/run.sh — must produce identical JSON to rs_interop and py_interop.
 
-import { createReadStream } from "node:fs"
 import { createInterface } from "node:readline"
 import { Gram } from "../../typescript/packages/pattern/dist/gram.js"
 
