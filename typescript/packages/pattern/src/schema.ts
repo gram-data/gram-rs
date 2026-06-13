@@ -1,22 +1,23 @@
-// schema.ts — Decode pipeline for the JSON interchange format
+// schema.ts — JSON interchange format codec
 //
-// The Rust gram-codec produces a JSON array of AstPattern objects using the
-// "subject" key. This module validates and decodes that payload into native
-// Pattern<Subject> objects without any external schema library.
+// Converts between the JSON interchange format (RawPattern/RawSubject) and
+// native Pattern<Subject> objects. The interchange format is defined by
+// docs/pattern.schema.json in gram-data/tree-sitter-gram.
 
 import { valueFromRaw } from "./value.js"
 import { Subject } from "./subject.js"
 import { Pattern } from "./pattern.js"
+import type { Value } from "./value.js"
 
-// --- Raw types (JSON interchange format from Rust gram-codec) ---
+// --- Raw types (JSON interchange format) ---
 
-interface RawSubject {
+export interface RawSubject {
   identity:   string
   labels:     ReadonlyArray<string>
   properties: Record<string, unknown>
 }
 
-interface RawPattern {
+export interface RawPattern {
   subject:  RawSubject
   elements: ReadonlyArray<RawPattern>
 }
@@ -49,7 +50,7 @@ export function validatePayload(raw: unknown): ReadonlyArray<RawPattern> {
   return raw as ReadonlyArray<RawPattern>
 }
 
-// --- Constructor from raw JSON ---
+// --- Raw JSON → native ---
 
 export function patternFromRaw(raw: RawPattern): Pattern<Subject> {
   const subject = Subject.from({
@@ -60,4 +61,37 @@ export function patternFromRaw(raw: RawPattern): Pattern<Subject> {
     ),
   })
   return new Pattern({ value: subject, elements: raw.elements.map(patternFromRaw) })
+}
+
+// --- Native → raw JSON ---
+
+export function patternToRaw(p: Pattern<Subject>): RawPattern {
+  return {
+    subject: {
+      identity:   p.value.identity,
+      labels:     [...p.value.labels].sort(),
+      properties: Object.fromEntries(
+        Object.entries(p.value.properties).map(([k, v]) => [k, valueToRaw(v)])
+      ),
+    },
+    elements: p.elements.map(patternToRaw),
+  }
+}
+
+function valueToRaw(v: Value): unknown {
+  switch (v._tag) {
+    case "StringVal":       return v.value
+    case "IntVal":          return v.value
+    case "FloatVal":        return v.value
+    case "BoolVal":         return v.value
+    case "NullVal":         throw new Error("JSON null is not representable as a gram value")
+    case "SymbolVal":       return { type: "symbol",      value: v.value }
+    case "TaggedStringVal": return { type: "tagged",      tag: v.tag, content: v.content }
+    case "RangeVal":        return { type: "range",       lower: v.lower, upper: v.upper }
+    case "MeasurementVal":  return { type: "measurement", unit: v.unit, value: v.value }
+    case "ArrayVal":        return v.items.map(valueToRaw)
+    case "MapVal":          return Object.fromEntries(
+      Object.entries(v.entries).map(([k, val]) => [k, valueToRaw(val)])
+    )
+  }
 }

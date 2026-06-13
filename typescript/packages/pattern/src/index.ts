@@ -34,6 +34,9 @@ export {
 
 export { Gram } from "./gram.js"
 
+export type { RawPattern, RawSubject } from "./schema.js"
+export { patternFromRaw, patternToRaw, validatePayload } from "./schema.js"
+
 export type {
   StringVal,
   IntVal,

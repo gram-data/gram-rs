@@ -6,7 +6,8 @@
 import { GramParseError } from "./errors.js"
 import { Pattern } from "./pattern.js"
 import { Subject } from "./subject.js"
-import { validatePayload, patternFromRaw } from "./schema.js"
+import { validatePayload, patternFromRaw, patternToRaw } from "./schema.js"
+import type { RawPattern } from "./schema.js"
 
 // --- WASM module loader ---
 
@@ -149,6 +150,37 @@ export const Gram = {
   },
 
   /**
+   * Parse gram notation and return the raw JSON interchange objects without
+   * constructing native `Pattern<Subject>` instances.
+   *
+   * Use this on the server to produce a serializable payload that can be sent
+   * to a client without shipping the WASM dependency. The client can reconstruct
+   * native patterns with `patternFromRaw`.
+   *
+   * @param input - Gram notation string.
+   * @returns `Promise<ReadonlyArray<RawPattern>>`, rejecting with `GramParseError` on failure.
+   *
+   * @example
+   * ```ts
+   * // Server (has WASM)
+   * const raw = await Gram.parseRaw("(alice:Person)-[:KNOWS]->(bob:Person)")
+   * res.json(raw)
+   *
+   * // Client (no WASM)
+   * import { patternFromRaw, validatePayload } from "@relateby/pattern"
+   * const patterns = validatePayload(data).map(patternFromRaw)
+   * ```
+   */
+  async parseRaw(input: string): Promise<ReadonlyArray<RawPattern>> {
+    try {
+      const wasm = await loadWasm()
+      return validatePayload(wasm.parse(input))
+    } catch (cause) {
+      throw cause instanceof GramParseError ? cause : new GramParseError({ input, cause })
+    }
+  },
+
+  /**
    * Serialize an array of `Pattern<Subject>` to gram notation.
    *
    * @param patterns - Patterns to serialize.
@@ -246,39 +278,3 @@ export const Gram = {
   },
 }
 
-// --- Internal: native Pattern<Subject> → raw AstPattern JSON shape ---
-
-function patternToRaw(p: Pattern<Subject>): object {
-  return {
-    subject: {
-      identity:   p.value.identity,
-      labels:     [...p.value.labels].sort(),
-      properties: Object.fromEntries(
-        Object.entries(p.value.properties).map(([k, v]) => [k, valueToRaw(v)])
-      ),
-    },
-    elements: p.elements.map(patternToRaw),
-  }
-}
-
-// Converts a native Value back to the JSON interchange format.
-// Mirrors json_to_value in the Rust json.rs module.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function valueToRaw(v: any): unknown {
-  switch (v._tag) {
-    case "StringVal":       return v.value
-    case "IntVal":          return v.value
-    case "FloatVal":        return v.value
-    case "BoolVal":         return v.value
-    case "NullVal":         throw new Error("JSON null is not representable as a gram value")
-    case "SymbolVal":       return { type: "symbol",      value: v.value }
-    case "TaggedStringVal": return { type: "tagged",      tag: v.tag, content: v.content }
-    case "RangeVal":        return { type: "range",       lower: v.lower, upper: v.upper }
-    case "MeasurementVal":  return { type: "measurement", unit: v.unit, value: v.value }
-    case "ArrayVal":        return (v.items as ReadonlyArray<unknown>).map(valueToRaw)
-    case "MapVal":          return Object.fromEntries(
-      Object.entries(v.entries as Record<string, unknown>).map(([k, val]) => [k, valueToRaw(val)])
-    )
-    default: return null
-  }
-}
