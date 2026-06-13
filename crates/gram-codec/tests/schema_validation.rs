@@ -7,9 +7,8 @@
 use gram_codec::parse_to_ast;
 use serde_json::Value as JsonValue;
 
-const SCHEMA_JSON: &str = include_str!(
-    "../../../external/tree-sitter-gram/docs/pattern.schema.json"
-);
+const SCHEMA_JSON: &str =
+    include_str!("../../../external/tree-sitter-gram/docs/pattern.schema.json");
 
 fn load_canonical_schema() -> JsonValue {
     serde_json::from_str(SCHEMA_JSON).expect("pattern.schema.json is valid JSON")
