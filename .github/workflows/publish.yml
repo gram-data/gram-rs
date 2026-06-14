@@ -239,5 +239,9 @@ jobs:
         env:
           RELEASE_VERSION: ${{ needs.validate.outputs.version }}
         run: |
-          python -m pip install "relateby-pattern==${RELEASE_VERSION}"
+          for i in 1 2 3 4 5; do
+            python -m pip install "relateby-pattern==${RELEASE_VERSION}" && break
+            echo "Attempt $i/5: PyPI not yet indexed, retrying in 30s..."
+            sleep 30
+          done
           python scripts/release/python-smoke.py --expect-distribution relateby-pattern
