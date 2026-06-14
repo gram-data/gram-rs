@@ -226,11 +226,13 @@ $repo_root/Cargo.toml
 $repo_root/crates/gram-codec/Cargo.toml
 $repo_root/crates/pato/Cargo.toml
 $ts_pattern_dir/package.json
+$repo_root/typescript/packages/pattern-effect/package.json
 $ts_graph_dir/package.json
 $ts_gram_dir/package.json
 $repo_root/package-lock.json
 $repo_root/examples/typescript/graph/package-lock.json
 $python_pkg_dir/pyproject.toml
+$repo_root/scripts/release/npm-smoke/package.json
 EOF
 }
 
