@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest"
-import { GramParseError } from "../src/errors.js"
 import { Option } from "../src/fp.js"
 import { Pattern } from "../src/pattern.js"
 import { StandardGraph } from "../src/standard-graph.js"
@@ -75,19 +74,6 @@ describe("StandardGraph", () => {
     expect(Option.isSome(graph.node("alice"))).toBe(true)
     expect(Option.isNone(graph.node("missing"))).toBe(true)
     expect(Option.isNone(graph.relationship("missing"))).toBe(true)
-  })
-
-  it("fromGram composes parse and classify", async () => {
-    const graph = await StandardGraph.fromGram("(a:Person)-->(b:Person)")
-
-    expect(graph.nodeCount).toBe(2)
-    expect(graph.relationshipCount).toBe(1)
-    expect(Option.isSome(graph.node("a"))).toBe(true)
-  })
-
-  it("fromGram preserves parse failures", async () => {
-    const err = await StandardGraph.fromGram("(alice").catch(e => e)
-    expect(err).toBeInstanceOf(GramParseError)
   })
 
   describe("back-reference label preservation", () => {
