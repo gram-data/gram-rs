@@ -153,7 +153,7 @@ jobs:
       - name: Smoke-test packed npm artifact
         run: |
           cd ./scripts/release/npm-smoke
-          npm install ../../../target/npm-packages/*.tgz
+          npm install
           npm run smoke
 
   interop-validation:
