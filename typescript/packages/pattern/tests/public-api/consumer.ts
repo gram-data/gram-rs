@@ -1,5 +1,4 @@
 import {
-  Gram,
   Option,
   Pattern,
   StandardGraph,
@@ -13,7 +12,7 @@ import {
   values,
 } from "@relateby/pattern"
 
-export async function exercisePublicSurface(): Promise<void> {
+export function exercisePublicSurface(): void {
   const alice = Subject.fromId("alice")
     .withLabel("Person")
     .withProperty("name", Value.String({ value: "Alice" }))
@@ -27,9 +26,6 @@ export async function exercisePublicSurface(): Promise<void> {
   })
 
   const graph = StandardGraph.fromPatterns([relationship])
-  const parsed = await Gram.parse("(alice:Person)-->(bob:Person)")
-  const serialized = await Gram.stringify(parsed)
-  await Gram.validate("(alice:Person)-->(bob:Person)")
 
   const allValues = values(relationship)
   const count = pipe(relationship, fold(0, (acc) => acc + 1))
@@ -47,8 +43,6 @@ export async function exercisePublicSurface(): Promise<void> {
   })
 
   void graph
-  void parsed
-  void serialized
   void allValues
   void count
   void match

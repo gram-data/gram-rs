@@ -15,16 +15,23 @@
   },
   "exports": {
     ".": {
+      "browser": "./dist/index-browser.js",
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "wasm",
+    "wasm-node"
   ],
   "scripts": {
-    "build": "tsc",
+    "build:wasm": "wasm-pack build ../../../adapters/wasm/pattern-wasm --target bundler --out-dir ../../../typescript/packages/gram/wasm",
+    "build:wasm:node": "wasm-pack build ../../../adapters/wasm/pattern-wasm --target nodejs --out-dir ../../../typescript/packages/gram/wasm-node",
+    "build:ts": "tsc",
+    "build:assets": "rm -rf dist/wasm dist/wasm-node && cp -R wasm dist/wasm && cp -R wasm-node dist/wasm-node && rm -f dist/wasm/.gitignore dist/wasm-node/.gitignore",
+    "build": "npm run build:wasm && npm run build:wasm:node && npm run build:ts && npm run build:assets",
     "test": "vitest run",
     "pack:release": "npm pack --pack-destination ../../../target/npm-packages",
     "test:watch": "vitest"
@@ -33,6 +40,7 @@
     "@relateby/pattern": "0.5.3"
   },
   "devDependencies": {
+    "@types/node": "^25.3.0",
     "typescript": "^5.0.0",
     "vitest": "^2.0.0"
   },

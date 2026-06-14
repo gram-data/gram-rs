@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { Gram } from "../src/gram.js"
-import { GramParseError } from "../src/errors.js"
+import { GramParseError } from "@relateby/pattern"
 
 describe("Gram parity", () => {
   describe("parseWithHeader", () => {

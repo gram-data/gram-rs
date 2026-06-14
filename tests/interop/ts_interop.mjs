@@ -3,7 +3,7 @@
 // Used by tests/interop/run.sh — must produce identical JSON to rs_interop and py_interop.
 
 import { createInterface } from "node:readline"
-import { Gram } from "../../typescript/packages/pattern/dist/gram.js"
+import { Gram } from "../../typescript/packages/gram/dist/gram.js"
 
 const lines = []
 const rl = createInterface({ input: process.stdin })

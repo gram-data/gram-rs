@@ -1,4 +1,4 @@
-export { Gram } from "./gram.js"
+export { Gram } from "./gram-browser.js"
 export { GramParseError } from "@relateby/pattern"
 
 /**
@@ -6,6 +6,6 @@ export { GramParseError } from "@relateby/pattern"
  * Gram loads lazily on first use; call this at app startup to pay that cost upfront.
  */
 export async function init(): Promise<void> {
-  const { Gram } = await import("./gram.js")
+  const { Gram } = await import("./gram-browser.js")
   await Gram.validate("(init)")
 }
