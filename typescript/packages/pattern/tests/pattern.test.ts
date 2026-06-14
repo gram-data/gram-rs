@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest"
 import {
-  Gram,
   Option,
   Pattern,
   StandardGraph,
@@ -49,37 +48,6 @@ describe("@relateby/pattern", () => {
     expect(values(tree)).toEqual(["root", "left", "right", "leaf"])
     expect(pipe(tree, fold(0, (acc, value) => acc + value.length))).toBe(17)
     expect(pipe(tree, findFirst((value) => value.startsWith("lea")))).toEqual(Option.some("leaf"))
-  })
-
-  it("parses, validates, and stringifies gram notation through the JSON codec bridge", async () => {
-    const parsed = await Gram.parse("(alice:Person)-->(bob:Person)")
-    const serialized = await Gram.stringify(parsed)
-    await Gram.validate("(alice:Person)-->(bob:Person)")
-    const graph = StandardGraph.fromPatterns(parsed)
-
-    expect(parsed).toHaveLength(1)
-    expect(graph.nodeCount).toBe(2)
-    expect(graph.relationshipCount).toBe(1)
-    expect(serialized).toContain("alice")
-    expect(serialized).toContain("bob")
-  })
-
-  it("decodes subject properties from the JSON codec bridge", async () => {
-    const [parsed] = await Gram.parse('(alice:Person {name: "Alice", age: 42, active: true})')
-
-    expect(parsed?.value.identity).toBe("alice")
-    expect(Object.entries(parsed?.value.properties ?? {})).toContainEqual([
-      "name",
-      Value.String({ value: "Alice" }),
-    ])
-    expect(Object.entries(parsed?.value.properties ?? {})).toContainEqual([
-      "age",
-      Value.Int({ value: 42 }),
-    ])
-    expect(Object.entries(parsed?.value.properties ?? {})).toContainEqual([
-      "active",
-      Value.Bool({ value: true }),
-    ])
   })
 
   it("classifies native patterns with StandardGraph", () => {

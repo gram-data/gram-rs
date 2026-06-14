@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest"
 import * as PublicApi from "../../src/index.js"
 
 const expectedTopLevelExports = [
-  "Gram",
   "GramParseError",
   "Pattern",
   "StandardGraph",
@@ -29,14 +28,6 @@ describe("@relateby/pattern public export inventory", () => {
     for (const symbol of expectedTopLevelExports) {
       expect(PublicApi, `missing export: ${symbol}`).toHaveProperty(symbol)
     }
-  })
-
-  it("keeps the package-level Gram facade callable", () => {
-    expect(PublicApi.Gram).toBeDefined()
-    expect(typeof PublicApi.Gram.parse).toBe("function")
-    expect(typeof PublicApi.Gram.parseRaw).toBe("function")
-    expect(typeof PublicApi.Gram.stringify).toBe("function")
-    expect(typeof PublicApi.Gram.validate).toBe("function")
   })
 
   it("exposes JSON interchange codec functions", () => {

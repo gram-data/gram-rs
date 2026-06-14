@@ -1,13 +1,9 @@
 // gram.ts — Promise-based parse/stringify interface
 //
 // All methods return Promise<T>, rejecting with GramParseError on failure.
-// Effect users can wrap these via @relateby/pattern-effect.
 
-import { GramParseError } from "./errors.js"
-import { Pattern } from "./pattern.js"
-import { Subject } from "./subject.js"
-import { validatePayload, patternFromRaw, patternToRaw } from "./schema.js"
-import type { RawPattern } from "./schema.js"
+import { GramParseError, Pattern, Subject, validatePayload, patternFromRaw, patternToRaw } from "@relateby/pattern"
+import type { RawPattern } from "@relateby/pattern"
 
 // --- WASM module loader ---
 
@@ -62,8 +58,6 @@ async function loadWasm(): Promise<WasmGram> {
 
       // Fallback path: ESM dynamic import — works in Vite/vitest environments
       // where createRequire/fileURLToPath cannot resolve the wasm-node module.
-      // Vite correctly resolves relative imports against the original source
-      // location even when import.meta.url has been transformed.
       for (const relPath of [
         "./wasm-node/pattern_wasm.js",
         "../wasm-node/pattern_wasm.js",
@@ -87,10 +81,8 @@ async function loadWasm(): Promise<WasmGram> {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mod = await import(/* @vite-ignore */ "./wasm/pattern_wasm.js" as string) as any
       // wasm-pack bundler-target modules export an async init() as the default
-      // export.  Call it explicitly to ensure the WASM binary is instantiated
-      // in environments where the bundler did not auto-initialize it
-      // (e.g. vitest + vite-plugin-wasm, or any env where isNode evaluated to
-      // false due to Vite replacing process.versions.node for a browser build).
+      // export. Call it explicitly to ensure the WASM binary is instantiated
+      // in environments where the bundler did not auto-initialize it.
       if (typeof mod.default === "function") {
         await (mod.default as () => Promise<unknown>)()
       }
@@ -125,15 +117,12 @@ export const Gram = {
   /**
    * Parse gram notation into an array of `Pattern<Subject>`.
    *
-   * Each top-level element in the gram document becomes one entry in the
-   * returned array.  An empty string returns an empty array.
-   *
    * @param input - Gram notation string, e.g. `"(alice:Person)-[:KNOWS]->(bob:Person)"`.
    * @returns `Promise<ReadonlyArray<Pattern<Subject>>>`, rejecting with `GramParseError` on failure.
    *
    * @example
    * ```ts
-   * import { Gram } from "@relateby/pattern"
+   * import { Gram } from "@relateby/gram"
    *
    * const patterns = await Gram.parse("(alice:Person)-[:KNOWS]->(bob:Person)")
    * const gram = await Gram.stringify(patterns)
@@ -159,17 +148,6 @@ export const Gram = {
    *
    * @param input - Gram notation string.
    * @returns `Promise<ReadonlyArray<RawPattern>>`, rejecting with `GramParseError` on failure.
-   *
-   * @example
-   * ```ts
-   * // Server (has WASM)
-   * const raw = await Gram.parseRaw("(alice:Person)-[:KNOWS]->(bob:Person)")
-   * res.json(raw)
-   *
-   * // Client (no WASM)
-   * import { patternFromRaw, validatePayload } from "@relateby/pattern"
-   * const patterns = validatePayload(data).map(patternFromRaw)
-   * ```
    */
   async parseRaw(input: string): Promise<ReadonlyArray<RawPattern>> {
     try {
@@ -185,14 +163,6 @@ export const Gram = {
    *
    * @param patterns - Patterns to serialize.
    * @returns `Promise<string>`, rejecting with `GramParseError` on failure.
-   *
-   * @example
-   * ```ts
-   * import { Gram } from "@relateby/pattern"
-   *
-   * const patterns = await Gram.parse("(a)-->(b)")
-   * const gram = await Gram.stringify(patterns)
-   * ```
    */
   async stringify(patterns: ReadonlyArray<Pattern<Subject>>): Promise<string> {
     try {
@@ -230,7 +200,7 @@ export const Gram = {
    *
    * @example
    * ```ts
-   * import { Gram } from "@relateby/pattern"
+   * import { Gram } from "@relateby/gram"
    *
    * const { header, patterns } = await Gram.parseWithHeader("{version: 1} (alice)-[:KNOWS]->(bob)")
    * ```
@@ -256,14 +226,6 @@ export const Gram = {
    * @param header - Plain object to write as the leading bare record, or `undefined` to omit.
    * @param patterns - Patterns to serialize.
    * @returns `Promise<string>`, rejecting with `GramParseError` on failure.
-   *
-   * @example
-   * ```ts
-   * import { Gram } from "@relateby/pattern"
-   *
-   * const patterns = await Gram.parse("(alice)-[:KNOWS]->(bob)")
-   * const gram = await Gram.stringifyWithHeader({ version: 1 }, patterns)
-   * ```
    */
   async stringifyWithHeader(
     header: Record<string, unknown> | undefined,
@@ -277,4 +239,3 @@ export const Gram = {
     }
   },
 }
-

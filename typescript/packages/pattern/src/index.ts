@@ -32,8 +32,6 @@ export {
   unfoldGraph,
 } from "./graph/index.js"
 
-export { Gram } from "./gram.js"
-
 export type { RawPattern, RawSubject } from "./schema.js"
 export { patternFromRaw, patternToRaw, validatePayload } from "./schema.js"
 

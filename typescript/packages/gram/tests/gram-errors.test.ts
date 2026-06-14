@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { Gram } from "../src/gram.js"
-import { GramParseError } from "../src/errors.js"
-import { Pattern } from "../src/pattern.js"
-import { Subject } from "../src/subject.js"
-import { Value } from "../src/value.js"
+import { GramParseError, Pattern, Subject, Value } from "@relateby/pattern"
 
 describe("Gram errors", () => {
   it("rejects with GramParseError on invalid input", async () => {
