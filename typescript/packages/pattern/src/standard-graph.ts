@@ -1,5 +1,4 @@
 import { type Option, Option as O } from "./fp.js"
-import { Gram } from "./gram.js"
 import { Pattern } from "./pattern.js"
 import { Subject } from "./subject.js"
 
@@ -18,16 +17,25 @@ export class StandardGraph {
   private readonly _walks = new Map<string, Pattern<Subject>>()
   private readonly _other = new Map<string, Pattern<Subject>>()
 
+  /**
+   * Build a StandardGraph from an array of patterns.
+   *
+   * To construct from gram notation, parse first then pass the result here:
+   *
+   * ```typescript
+   * import { Gram } from "@relateby/gram"
+   * import { StandardGraph } from "@relateby/pattern"
+   *
+   * const patterns = await Gram.parse("(alice:Person)-[:KNOWS]->(bob:Person)")
+   * const graph = StandardGraph.fromPatterns(patterns)
+   * ```
+   */
   static fromPatterns(patterns: ReadonlyArray<Pattern<Subject>>): StandardGraph {
     const graph = new StandardGraph()
     for (const pattern of patterns) {
       graph.ingest(pattern)
     }
     return graph
-  }
-
-  static async fromGram(input: string): Promise<StandardGraph> {
-    return StandardGraph.fromPatterns(await Gram.parse(input))
   }
 
   get nodeCount(): number {

@@ -25,7 +25,10 @@ const relationship = new Pattern({
 })
 
 const graph = StandardGraph.fromPatterns([relationship])
+
+// Parse gram notation and build a graph in two explicit steps:
 const parsed = await Effect.runPromise(Gram.parse("(alice:Person)-->(bob:Person)"))
+const parsedGraph = StandardGraph.fromPatterns(parsed)
 
 console.log(graph.nodeCount)
 console.log(Option.getOrUndefined(graph.node("alice"))?.value.identity)
